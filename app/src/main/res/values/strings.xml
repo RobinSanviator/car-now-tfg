@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">CarNow</string>
+    <string name="comenzar">¡Empezar!</string>
     <string name="iniciar_sesion">Iniciar sesión</string>
-    <string name="no_cuenta">¿Todavía no tienes cuenta?, Regístrate</string>
+    <string name="no_cuenta">¿No tienes cuenta? Regístrate</string>
+    <string name="textoCorreo">Email</string>
+    <string name="textoContraseña">Contraseña</string>
 </resources>

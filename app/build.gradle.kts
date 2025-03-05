@@ -38,6 +38,7 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.constraintlayout)
     implementation("androidx.core:core-splashscreen:1.0.0-beta02")
+    implementation ("com.airbnb.android:lottie:6.6.3")
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
