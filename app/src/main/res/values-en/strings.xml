@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">CarNow</string>
-    <string name="comenzar">Get started!</string>
+    <string name="empezar">Get started!</string>
     <string name="iniciar_sesion">Login</string>
     <string name="no_cuenta">Don\'t have an account ? Register now</string>
     <string name="textoCorreo">Email</string>

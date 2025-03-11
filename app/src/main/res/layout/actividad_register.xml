@@ -6,14 +6,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/coche_fondo"
-    tools:context=".vista.ActividadIntroduccion">
+    tools:context=".vista.activity.LoginActivity">
 
     <ImageView
         android:id="@+id/iv_logo"
         android:layout_width="match_parent"
         android:layout_height="250dp"
         android:src="@drawable/logo_carnow"
-
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -21,21 +21,33 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.015" />
 
-    <ScrollView
-        android:layout_width="406dp"
-        android:layout_height="709dp"
-        android:fillViewport="true"
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/mb_empezar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone"
+        android:layout_margin="40dp"
+        android:backgroundTint="@color/color_principal_variante"
+        android:elevation="8dp"
+        android:gravity="center"
+        android:padding="16dp"
+        android:text="@string/empezar"
+        android:textColor="@color/color_texto_primario"
+        android:textSize="18sp"
+        app:cornerRadius="25dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0"
-        tools:ignore="SpeakableTextPresentCheck">
+        app:layout_constraintTop_toBottomOf="@+id/iv_logo"
+        app:layout_constraintVertical_bias="0.925" />
 
-        <LinearLayout
+    <LinearLayout
             android:id="@+id/linear_acceso"
             android:layout_width="match_parent"
-            android:layout_height="600dp"
+            android:layout_height="720dp"
             android:background="@drawable/fondo_intro_redondeado"
             android:elevation="8dp"
             android:orientation="vertical"
@@ -67,7 +79,7 @@
                     android:maxLines="1"
                     android:padding="16dp"
                     android:textColor="@color/color_texto_primario"
-                    android:textSize="20sp" />
+                    android:textSize="18sp" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -91,11 +103,11 @@
                     android:maxLines="1"
                     android:padding="16dp"
                     android:textColor="@color/color_texto_primario"
-                    android:textSize="20sp" />
+                    android:textSize="18sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/mb_empezar"
+                android:id="@+id/mb_iniciar_sesion"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -123,6 +135,5 @@
 
 
         </LinearLayout>
-    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
