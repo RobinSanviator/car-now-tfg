@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cl_contenedor_principal_inicio_sesion"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/coche_fondo"
+    tools:context=".vista.actividad.ActividadInicioSesion">
+
+    <ImageView
+        android:id="@+id/iv_logo"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:src="@drawable/logo_carnow"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.015"
+        tools:ignore="ContentDescription" />
+
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_empezar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone"
+        android:layout_margin="40dp"
+        android:backgroundTint="@color/color_principal"
+        android:elevation="8dp"
+        android:gravity="center"
+        android:padding="16dp"
+        android:text="@string/empezar"
+        android:textColor="@color/color_texto_primario"
+        android:textSize="18sp"
+        app:cornerRadius="25dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iv_logo"
+        app:layout_constraintVertical_bias="0.925" />
+
+
+    <LinearLayout
+            android:id="@+id/ly_acceso"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/fondo_degradado_redondeado"
+            android:elevation="8dp"
+            android:orientation="vertical"
+            android:padding="40dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/iv_logo"
+            app:layout_constraintVertical_bias="1.0">
+
+
+        <TextView
+                android:id="@+id/tv_iniciar_sesion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/inicio_sesion"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                android:textColor="@color/color_texto_primario"
+                android:layout_gravity="start"
+                android:layout_marginTop="40dp"
+                android:gravity="start"/>
+
+        <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_iniciar_sesion_google"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                android:gravity="center_horizontal"
+                android:padding="16dp"
+                android:text="@string/inicio_sesion_google"
+                android:textAllCaps="false"
+                android:textColor="@color/color_texto_primario"
+                android:textSize="16sp"
+                app:icon="@drawable/ic_google"
+                app:iconGravity="textStart"
+                app:iconSize="20dp"
+                app:iconTint="@null"
+                android:backgroundTint="@color/color_principal_variante"
+                app:cornerRadius="50dp" />
+
+        <TextView
+                android:id="@+id/tv_texto_o"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="@string/o"
+                android:textColor="@color/color_texto_primario"
+                android:textStyle="bold"
+                />
+
+        <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_email_is"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                app:boxCornerRadiusBottomEnd="8dp"
+                app:boxCornerRadiusBottomStart="8dp"
+                app:boxCornerRadiusTopEnd="8dp"
+                app:boxCornerRadiusTopStart="8dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_correo_is"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/email"
+                    android:inputType="textEmailAddress"
+                    android:backgroundTint="@color/color_superficie"
+                    android:textColor="@color/color_texto_secundario" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_contrasena_is"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                app:boxCornerRadiusBottomEnd="8dp"
+                app:boxCornerRadiusBottomStart="8dp"
+                app:boxCornerRadiusTopEnd="8dp"
+                app:boxCornerRadiusTopStart="8dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_contrasena_is"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/contrasena"
+                    android:inputType="textPassword"
+                    android:backgroundTint="@color/color_superficie"
+                    android:textColor="@color/color_texto_secundario" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_iniciar_sesion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="5dp"
+                android:backgroundTint="@color/color_principal"
+                android:gravity="center"
+                android:padding="16dp"
+                android:text="@string/inicio_sesion"
+                android:textColor="@color/color_texto_primario"
+                android:textSize="18sp"
+                app:cornerRadius="50dp" />
+
+
+        <TextView
+                android:id="@+id/tv_no_cuenta"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="5dp"
+                android:gravity="center"
+                android:minHeight="48dp"
+                android:padding="16dp"
+                android:text="@string/no_cuenta"
+                android:textColor="@color/color_secundario"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+    </LinearLayout>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

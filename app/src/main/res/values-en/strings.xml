@@ -2,8 +2,14 @@
 <resources>
     <string name="app_name">CarNow</string>
     <string name="empezar">Get started!</string>
-    <string name="iniciar_sesion">Login</string>
-    <string name="no_cuenta">Don\'t have an account ? Register now</string>
-    <string name="textoCorreo">Email</string>
-    <string name="textoContraseña">Password</string>
+    <string name="no_cuenta">Don\'t have an account? Sign up now</string>
+    <string name="email">Email</string>
+    <string name="contrasena">Password</string>
+    <string name="nombre">Name</string>
+    <string name="confirmar_contrasena">Confirm Password</string>
+    <string name="inicio_sesion">LOG IN</string>
+    <string name="registrarse">SIGN UP</string>
+    <string name="tiene_cuenta">Have an account? Log in</string>
+    <string name="o">Or</string>
+    <string name="inicio_sesion_google">Log in with Google</string>
 </resources>

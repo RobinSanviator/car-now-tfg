@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "689400737896",
+    "project_id": "gestorrentacar-f4f48",
+    "storage_bucket": "gestorrentacar-f4f48.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:689400737896:android:da3ba1b85cfb6270770bdd",
+        "android_client_info": {
+          "package_name": "com.example.carnowapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "689400737896-laudad6l8gkkqa43i9ctqc5ncst422vl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.carnowapp",
+            "certificate_hash": "a1a40dd17f79779029121b865846fa7673e8b1b1"
+          }
+        },
+        {
+          "client_id": "689400737896-ibsr16sh8rgg9uadl3dl21fc9497oiuk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCiPJkYlWQApjZDbUCa_bJUD4QpA_5tl2w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "689400737896-ibsr16sh8rgg9uadl3dl21fc9497oiuk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,10 +1,16 @@
 <resources>
     <string name="app_name">CarNow</string>
     <string name="empezar">¡Empezar!</string>
-    <string name="iniciar_sesion">Iniciar sesión</string>
     <string name="no_cuenta">¿No tienes cuenta? Regístrate</string>
-    <string name="textoCorreo">Email</string>
-    <string name="textoContraseña">Contraseña</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="email">Email</string>
+    <string name="contrasena">Contraseña</string>
+    <string name="nombre">Nombre</string>
+    <string name="confirmar_contrasena">Confirmar Contraseña</string>
+    <string name="inicio_sesion">INICIAR SESIÓN</string>
+    <string name="registrarse">REGISTRARSE</string>
+    <string name="tiene_cuenta">¿Tienes cuenta? Inicia sesión</string>
+    <string name="o">O</string>
+    <string name="inicio_sesion_google">Iniciar sesión con Google</string>
+    <string name="default_web_client_id">689400737896-ibsr16sh8rgg9uadl3dl21fc9497oiuk.apps.googleusercontent.com</string>
+
 </resources>
