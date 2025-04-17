@@ -12,12 +12,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:targetApi="31">
-
+        <activity
+            android:name=".vista.actividad.ActividadMenuPrincipal"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".vista.actividad.ActividadPantallaDeInicio"
             android:exported="true"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.App.Starting">
+            android:theme="@style/Theme.CarNow.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -32,7 +35,7 @@
         <activity
             android:name=".vista.actividad.ActividadInicioSesion"
             android:exported="true"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

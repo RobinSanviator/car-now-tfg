@@ -3,12 +3,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".vista.fragmento.FragmentoReservas">
+    tools:context=".vista.fragmento.FragmentoReserva">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:text="RESERVA"
+        android:layout_gravity="center"
+        android:textColor="@color/color_texto_primario"
+        android:gravity="center"
+        android:textSize="40sp"
         />
+
 
 </FrameLayout>

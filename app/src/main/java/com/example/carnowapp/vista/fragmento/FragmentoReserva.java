@@ -12,10 +12,10 @@ import com.example.carnowapp.R;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link FragmentoVehiculo#newInstance} factory method to
+ * Use the {@link FragmentoReserva#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FragmentoVehiculo extends Fragment {
+public class FragmentoReserva extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -26,7 +26,7 @@ public class FragmentoVehiculo extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public FragmentoVehiculo() {
+    public FragmentoReserva() {
         // Required empty public constructor
     }
 
@@ -36,11 +36,11 @@ public class FragmentoVehiculo extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment VehiclesFragment.
+     * @return A new instance of fragment ReservationsFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static FragmentoVehiculo newInstance(String param1, String param2) {
-        FragmentoVehiculo fragment = new FragmentoVehiculo();
+    public static FragmentoReserva newInstance(String param1, String param2) {
+        FragmentoReserva fragment = new FragmentoReserva();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -61,6 +61,6 @@ public class FragmentoVehiculo extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.vehiculo_fragmento, container, false);
+        return inflater.inflate(R.layout.reserva_fragmento, container, false);
     }
 }

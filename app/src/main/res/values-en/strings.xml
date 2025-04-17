@@ -12,4 +12,10 @@
     <string name="tiene_cuenta">Have an account? Log in</string>
     <string name="o">Or</string>
     <string name="inicio_sesion_google">Log in with Google</string>
+    <string name="default_web_client_id">689400737896-ibsr16sh8rgg9uadl3dl21fc9497oiuk.apps.googleusercontent.com</string>
+    <string name="textoMenuPrincipal">Home</string>
+    <string name="textoReservas">Reservations</string>
+    <string name="textoNotificaciones">Alerts</string>
+    <string name="textoAjustes">Settings</string>
+    <string name="cerrarSesion">Log Out</string>
 </resources>

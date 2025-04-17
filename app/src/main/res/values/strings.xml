@@ -12,5 +12,10 @@
     <string name="o">O</string>
     <string name="inicio_sesion_google">Iniciar sesión con Google</string>
     <string name="default_web_client_id">689400737896-ibsr16sh8rgg9uadl3dl21fc9497oiuk.apps.googleusercontent.com</string>
+    <string name="textoMenuPrincipal">Inicio</string>
+    <string name="textoReservas">Reservas</string>
+    <string name="textoNotificaciones">Alertas</string>
+    <string name="textoAjustes">Ajustes</string>
+    <string name="cerrarSesion">Cerrar Sesión</string>
 
 </resources>

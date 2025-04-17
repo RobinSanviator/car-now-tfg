@@ -114,13 +114,13 @@
                 app:boxCornerRadiusTopStart="8dp">
 
             <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_correo_is"
+                    android:id="@+id/et_email_is"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/email"
                     android:inputType="textEmailAddress"
                     android:backgroundTint="@color/color_superficie"
-                    android:textColor="@color/color_texto_secundario" />
+                    android:textColor="@color/color_texto_primario" />
         </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -135,13 +135,13 @@
                 app:boxCornerRadiusTopStart="8dp">
 
             <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_contrasena_is"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/contrasena"
-                    android:inputType="textPassword"
-                    android:backgroundTint="@color/color_superficie"
-                    android:textColor="@color/color_texto_secundario" />
+                android:id="@+id/et_contrasena_is"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/contrasena"
+                android:inputType="textPassword"
+                android:backgroundTint="@color/color_superficie"
+                android:textColor="@color/color_texto_primario"  />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.button.MaterialButton

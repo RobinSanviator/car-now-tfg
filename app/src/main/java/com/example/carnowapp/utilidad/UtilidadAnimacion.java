@@ -9,7 +9,11 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AnticipateInterpolator;
+import android.view.animation.CycleInterpolator;
 import android.view.animation.DecelerateInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.view.inputmethod.InputMethodManager;
 
 import com.example.carnowapp.R;
@@ -19,27 +23,6 @@ import com.example.carnowapp.R;
  * Las animaciones incluyen aumento de tamaño, rebote, expansión y contracción de vistas.
  */
 public class UtilidadAnimacion {
-
-    /**
-     * Realiza una animación de aumento de tamaño de la vista, con una transición suave.
-     *
-     * @param vista    La vista que se va a animar.
-     * @param duracion La duración de la animación en milisegundos.
-     */
-    public static void animarAumentoTamanyo(View vista, long duracion) {
-        vista.setVisibility(View.VISIBLE);
-        vista.setScaleX(0f);
-        vista.setScaleY(0f);
-        vista.setAlpha(0f);
-
-        vista.animate()
-                .scaleX(1f)
-                .scaleY(1f)
-                .alpha(1f)
-                .setDuration(duracion)
-                .setInterpolator(new DecelerateInterpolator())
-                .start();
-    }
 
     /**
      * Realiza una animación de aumento de tamaño de la vista con un rebote opcional al final.
@@ -168,4 +151,31 @@ public class UtilidadAnimacion {
             return false;
         });
     }
+
+    public static void animarLogoSplash(View logo, long duracionGiro, long duracionSubida) {
+        if (logo == null) return;
+
+        logo.setAlpha(0f);
+        logo.setRotationY(90f); // Empieza "de lado"
+        logo.setTranslationY(0f);
+
+        // Aparece con un giro 3D en eje Y
+        logo.animate()
+                .rotationY(0f)
+                .alpha(1f)
+                .setDuration(duracionGiro)
+                .setInterpolator(new DecelerateInterpolator())
+                .withEndAction(() -> {
+                    // Luego sube lentamente y se desvanece
+                    logo.animate()
+                            .translationY(-logo.getHeight() * 1.5f)
+                            .alpha(0f)
+                            .setDuration(duracionSubida)
+                            .setInterpolator(new AccelerateInterpolator())
+                            .start();
+                })
+                .start();
+    }
+
 }
+

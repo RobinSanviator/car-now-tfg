@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/opcion_menu_principal"
+        android:icon="@drawable/ic_inicio"
+        android:iconTint="@color/color_texto_primario"
+        android:titleTextColor="@color/color_texto_primario"
+        android:textSize="18sp"
+        android:title="@string/textoMenuPrincipal"/>
+
+    <item
+        android:id="@+id/opcion_reserva"
+        android:icon="@drawable/ic_reserva"
+        android:iconTint="@color/color_texto_primario"
+        android:titleTextColor="@color/color_texto_primario"
+        android:textSize="18sp"
+        android:title="@string/textoReservas"/>
+
+
+    <item
+        android:id="@+id/opcion_notificaciones"
+        android:icon="@drawable/ic_notificacion"
+        android:iconTint="@color/color_texto_primario"
+        android:titleTextColor="@color/color_texto_primario"
+        android:textSize="18sp"
+        android:title="@string/textoNotificaciones"/>
+
+    <item
+        android:id="@+id/opcion_ajustes"
+        android:icon="@drawable/ic_ajustes"
+        android:iconTint="@color/color_texto_primario"
+        android:titleTextColor="@color/color_texto_primario"
+        android:textSize="18sp"
+        android:title="@string/textoAjustes"/>
+
+
+</menu>

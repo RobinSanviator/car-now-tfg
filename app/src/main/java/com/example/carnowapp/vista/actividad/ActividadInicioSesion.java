@@ -1,8 +1,8 @@
 package com.example.carnowapp.vista.actividad;
 
 import android.content.Intent;
-import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -10,15 +10,14 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-
 import com.example.carnowapp.R;
 import com.example.carnowapp.persistencia.FirebaseAutenticacion;
 import com.example.carnowapp.utilidad.UtilidadAnimacion;
+import com.example.carnowapp.utilidad.UtilidadPreferenciasUsuario;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -33,7 +32,7 @@ public class ActividadInicioSesion extends AppCompatActivity {
     private MaterialButton btnIniciarSesionGoogle,btnIniciarSesion;
     private TextView tvRegistro;
     private TextInputEditText etEmail, etContrasena;
-    private TextInputLayout tilContrasena;
+    private TextInputLayout tilEmail, tilContrasena;
     private ConstraintLayout clContenedorPrincipal;
     private static final int RC_SIGN_IN = 9001;
 
@@ -46,11 +45,12 @@ public class ActividadInicioSesion extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.inicio_sesion_actividad);
 
-
+        iniciarPreferenciasUsuario();
         iniciarAnimacion();
         irRegistro();
         mostrarContrasena();
         ocultarTeclado();
+        iniciarSesion();
         iniciarSesionConGoogle();
 
 
@@ -73,7 +73,7 @@ public class ActividadInicioSesion extends AppCompatActivity {
         }
 
         // Animar logo
-        UtilidadAnimacion.animarAumentoTamanyo(ivLogo, 900);
+        UtilidadAnimacion.animarExpandir(ivLogo);
 
         // Animar botón empezar con rebote
         UtilidadAnimacion.animarConRebote(btnEmpezar, 500, true);
@@ -90,6 +90,15 @@ public class ActividadInicioSesion extends AppCompatActivity {
 
         lyAcceso.setOnClickListener(v ->{ UtilidadAnimacion.animarContraer(lyAcceso, ActividadInicioSesion.this);});
 
+    }
+    private void iniciarPreferenciasUsuario() {
+        UtilidadPreferenciasUsuario.init(this); // Inicializa las preferencias
+
+        if (UtilidadPreferenciasUsuario.estaLogueado()) {
+            // Redirige directamente si ya hay sesión activa
+            startActivity(new Intent(this, ActividadMenuPrincipal.class));
+            finish();
+        }
     }
 
     private void ocultarTeclado(){
@@ -143,9 +152,52 @@ public class ActividadInicioSesion extends AppCompatActivity {
         });
     }
 
-    private void iniciarSesion(){
+    private void iniciarSesion() {
+        btnIniciarSesion = findViewById(R.id.btn_iniciar_sesion);
+        etEmail = findViewById(R.id.et_email_is);
+        etContrasena = findViewById(R.id.et_contrasena_is);
+        tilEmail = findViewById(R.id.til_email_is);
+        tilContrasena = findViewById(R.id.til_contrasena_is);
 
+        UtilidadAnimacion.ocultarTecladoAlTocar(this, btnIniciarSesion);
+        btnIniciarSesion.setOnClickListener(v ->     {
+            if (validarCampos()) {
+                String email = etEmail.getText().toString().trim();
+                String contrasena = etContrasena.getText().toString().trim();
+                FirebaseAutenticacion.iniciarSesionConCorreoYContrasena(this, email, contrasena);
+            }
+        });
     }
+
+
+    private boolean validarCampos() {
+        tilEmail = findViewById(R.id.til_email_is);
+        tilContrasena = findViewById(R.id.til_contrasena_is);
+        etEmail = findViewById(R.id.et_email_is);
+        etContrasena = findViewById(R.id.et_contrasena_is);
+
+        String email = etEmail.getText().toString().trim();
+        String contrasena = etContrasena.getText().toString().trim();
+
+        boolean camposValidos = true;
+
+        if (email.isEmpty()) {
+            tilEmail.setError("Introduce tu correo");
+            camposValidos = false;
+        } else {
+            tilEmail.setError(null);
+        }
+
+        if (contrasena.isEmpty()) {
+            tilContrasena.setError("Introduce tu contraseña");
+            camposValidos = false;
+        } else {
+            tilContrasena.setError(null);
+        }
+
+        return camposValidos;
+    }
+
 
     // Método para iniciar sesión con Google
     private void iniciarSesionConGoogle() {
@@ -165,8 +217,6 @@ public class ActividadInicioSesion extends AppCompatActivity {
             FirebaseAutenticacion.manejarResultadoGoogleSignIn(requestCode, resultCode, data, this);
         }
     }
-
-
 
 
     private void irRegistro(){

@@ -1,17 +1,21 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/color_principal</item>
+        <item name="colorPrimaryVariant">@color/color_principal_variante</item>
         <item name="colorSecondary">@color/color_secundario</item>
-        <item name="colorOnPrimary">@color/color_texto_primario</item>
-        <item name="colorOnBackground">@color/color_fondo</item>
-
+        <item name="colorSecondaryVariant">@color/color_secundario_variante</item>
+        <item name="android:windowBackground">@color/color_fondo</item>
+        <item name="colorSurface">@color/color_superficie</item>
+        <item name="colorOnSurface">@color/color_texto_primario</item>
+        <item name="colorOnBackground">@color/color_texto_primario</item>
+        <item name="android:textColorPrimary">@color/color_texto_primario</item>
+        <item name="android:textColorSecondary">@color/color_pista</item>
+        <item name="colorError">@color/color_error</item>
     </style>
 
-
-    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">@color/color_fondo</item>
-        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
-        <item name="postSplashScreenTheme">@style/AppTheme</item>
+    <style name="Theme.CarNow.Splash" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:windowBackground">@color/color_texto_secundario</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
-    
+
 </resources>
