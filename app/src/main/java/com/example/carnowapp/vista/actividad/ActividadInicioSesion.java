@@ -2,26 +2,37 @@ package com.example.carnowapp.vista.actividad;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.activity.EdgeToEdge;
-import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.lifecycle.ViewModelProvider;
+
 import com.example.carnowapp.R;
-import com.example.carnowapp.persistencia.FirebaseAutenticacion;
 import com.example.carnowapp.utilidad.UtilidadAnimacion;
+import com.example.carnowapp.utilidad.UtilidadDialogo;
+import com.example.carnowapp.utilidad.UtilidadNavegacion;
 import com.example.carnowapp.utilidad.UtilidadPreferenciasUsuario;
+import com.example.carnowapp.utilidad.UtilidadTeclado;
+import com.example.carnowapp.utilidad.UtilidadValidacion;
+import com.example.carnowapp.vistamodelo.FirebaseAutenticacionVistaModelo;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
-
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.GoogleAuthProvider;
 
 
 public class ActividadInicioSesion extends AppCompatActivity {
@@ -34,7 +45,10 @@ public class ActividadInicioSesion extends AppCompatActivity {
     private TextInputEditText etEmail, etContrasena;
     private TextInputLayout tilEmail, tilContrasena;
     private ConstraintLayout clContenedorPrincipal;
+    private GoogleSignInClient googleSignInClient;
     private static final int RC_SIGN_IN = 9001;
+    private FirebaseAutenticacionVistaModelo vistaModelo;
+    private AlertDialog dialogoDeCarga;
 
 
 
@@ -45,14 +59,15 @@ public class ActividadInicioSesion extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.inicio_sesion_actividad);
 
+
         iniciarPreferenciasUsuario();
         iniciarAnimacion();
         irRegistro();
         mostrarContrasena();
         ocultarTeclado();
         iniciarSesion();
-        iniciarSesionConGoogle();
-
+        iniciarSesionGoogle();
+        configurarGoogleSignIn();
 
     }
 
@@ -80,7 +95,7 @@ public class ActividadInicioSesion extends AppCompatActivity {
 
        // Animar contenedor
         btnEmpezar.setOnClickListener(v -> {
-            pulsarAtras();
+            UtilidadNavegacion.configurarBotonAtras(ActividadInicioSesion.this, lyAcceso, null, false);
             if (lyAcceso.getVisibility() != View.VISIBLE) {
                 UtilidadAnimacion.animarExpandir(lyAcceso);
             } else {
@@ -92,8 +107,8 @@ public class ActividadInicioSesion extends AppCompatActivity {
 
     }
     private void iniciarPreferenciasUsuario() {
-        UtilidadPreferenciasUsuario.init(this); // Inicializa las preferencias
-
+        UtilidadPreferenciasUsuario.init(this);
+        //UtilidadPreferenciasUsuario.aplicarIdioma(this);
         if (UtilidadPreferenciasUsuario.estaLogueado()) {
             // Redirige directamente si ya hay sesión activa
             startActivity(new Intent(this, ActividadMenuPrincipal.class));
@@ -103,30 +118,10 @@ public class ActividadInicioSesion extends AppCompatActivity {
 
     private void ocultarTeclado(){
         clContenedorPrincipal = findViewById(R.id.cl_contenedor_principal_inicio_sesion);
-        UtilidadAnimacion.ocultarTecladoAlTocar(this, clContenedorPrincipal);
+        UtilidadTeclado.ocultarTecladoAlTocar(this, clContenedorPrincipal);
 
     }
 
-
-
-    /**
-     * Personaliza el comportamiento del botón "Atrás".
-     * Si el layout de acceso está visible, lo contrae. Si no, finaliza la actividad.
-     */
-    private void pulsarAtras() {
-        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                // Si el layout está visible, lo contraemos
-                if (lyAcceso.getVisibility() == View.VISIBLE) {
-                    UtilidadAnimacion.animarContraer(lyAcceso, ActividadInicioSesion.this);
-                } else {
-                    // Si no, realizamos el comportamiento estándar de la acción de "Atrás"
-                    finish();
-                }
-            }
-        });
-    }
 
     /**
      * Muestra la contraseña caundo el sistema detecte texto en el campo de texto de contraseña.
@@ -136,38 +131,135 @@ public class ActividadInicioSesion extends AppCompatActivity {
         etContrasena = findViewById(R.id.et_contrasena_is);
         tilContrasena = findViewById(R.id.til_contrasena_is);
 
-        etContrasena.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (!charSequence.toString().isEmpty()) {
-                    tilContrasena.setEndIconMode(TextInputLayout.END_ICON_PASSWORD_TOGGLE);
-                } else {
-                    tilContrasena.setEndIconMode(TextInputLayout.END_ICON_NONE);
-                }
-            }
-            @Override
-            public void afterTextChanged(Editable editable) {}
-        });
+       UtilidadValidacion.configurarMostrarContrasenaInicio(etContrasena, tilContrasena, this);
     }
 
     private void iniciarSesion() {
+        vistaModelo = new ViewModelProvider(this).get(FirebaseAutenticacionVistaModelo.class);
+
         btnIniciarSesion = findViewById(R.id.btn_iniciar_sesion);
         etEmail = findViewById(R.id.et_email_is);
         etContrasena = findViewById(R.id.et_contrasena_is);
         tilEmail = findViewById(R.id.til_email_is);
         tilContrasena = findViewById(R.id.til_contrasena_is);
 
-        UtilidadAnimacion.ocultarTecladoAlTocar(this, btnIniciarSesion);
+        UtilidadTeclado.ocultarTecladoAlTocar(this, btnIniciarSesion);
         btnIniciarSesion.setOnClickListener(v ->     {
             if (validarCampos()) {
                 String email = etEmail.getText().toString().trim();
                 String contrasena = etContrasena.getText().toString().trim();
-                FirebaseAutenticacion.iniciarSesionConCorreoYContrasena(this, email, contrasena);
+                vistaModelo.iniciarSesionConCorreoYContrasena(email, contrasena);
+                observarAutenticacion();
             }
         });
     }
+
+    private void observarAutenticacion() {
+        vistaModelo.getUsuarioAutenticado().observe(this, usuario -> {
+            if (usuario != null) {
+                dialogoDeCarga = UtilidadDialogo.crearDialogoDeCarga(this, R.string.iniciando_sesion);
+                dialogoDeCarga.show();
+
+                UtilidadPreferenciasUsuario.guardarEstadoSesion(usuario.getUid());
+                startActivity(new Intent(this, ActividadMenuPrincipal.class));
+                finish();
+            }
+        });
+
+        vistaModelo.getCodigoErrorAutenticacion().observe(this, codigo -> {
+            int mensajeResId;
+
+            switch (codigo) {
+                case USUARIO_NO_REGISTRADO:
+                    mensajeResId = R.string.error_usuario_no_registrado;
+                    break;
+                case CREDENCIALES_INVALIDAS:
+                    mensajeResId = R.string.error_credenciales_invalidas;
+                    break;
+                case CREDENCIALES_NO_VALIDAS:
+                    mensajeResId = R.string.error_credenciales_no_validas;
+                    break;
+                default:
+                    mensajeResId = R.string.error_autenticacion_generico;
+                    break;
+            }
+
+            Snackbar.make(clContenedorPrincipal, getString(mensajeResId), Snackbar.LENGTH_LONG).show();
+        });
+    }
+
+    public enum CodigoErrorAutenticacion {
+        USUARIO_NO_REGISTRADO,
+        CREDENCIALES_INVALIDAS,
+        CREDENCIALES_NO_VALIDAS,
+        ERROR_DESCONOCIDO
+    }
+
+    private void iniciarSesionGoogle() {
+        // Inicializa el botón de Google SignIn
+        btnIniciarSesionGoogle = findViewById(R.id.btn_iniciar_sesion_google);
+        vistaModelo = new ViewModelProvider(this).get(FirebaseAutenticacionVistaModelo.class);
+        // Verifica que el botón no sea null
+        if (btnIniciarSesionGoogle != null) {
+            btnIniciarSesionGoogle.setOnClickListener(v -> {
+                dialogoDeCarga = UtilidadDialogo.crearDialogoDeCarga(this, R.string.iniciando_sesion);
+                dialogoDeCarga.show();
+                mostrarCuentaGoogle();
+            });
+        } else {
+            Log.e("ActividadInicioSesion", "btnIniciarSesionGoogle es null");
+        }
+        observarEventos();
+    }
+
+    private void configurarGoogleSignIn() {
+        vistaModelo.inicializarGoogleSignIn(this);
+
+    }
+
+    private void mostrarCuentaGoogle() {
+        GoogleSignInClient googleSignInClient = vistaModelo.obtenerGoogleSignInClient();
+        Intent signInIntent = googleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == RC_SIGN_IN) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            if (task != null) {
+                try {
+                    GoogleSignInAccount cuenta = task.getResult(ApiException.class);
+                    AuthCredential credential = GoogleAuthProvider.getCredential(cuenta.getIdToken(), null);
+
+                    vistaModelo.iniciarSesionConGoogle(credential, cuenta.getDisplayName(), cuenta.getEmail(), this);
+                } catch (ApiException e) {
+                    Snackbar.make(clContenedorPrincipal, getString(R.string.error_inicio_sesion), Snackbar.LENGTH_LONG).show();
+                }
+            } else {
+                Snackbar.make(clContenedorPrincipal, getString(R.string.error_inicio_sesion), Snackbar.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    private void observarEventos() {
+        vistaModelo.getLoginExitosoGoogle().observe(this, exitoso -> {
+            if (exitoso != null && exitoso) {
+                Snackbar.make(clContenedorPrincipal, getString(R.string.inicio_sesion_exitoso), Snackbar.LENGTH_SHORT).show();
+                UtilidadNavegacion.redirigirA(ActividadInicioSesion.this, ActividadMenuPrincipal.class);
+            }
+        });
+
+        vistaModelo.getErrorGoogle().observe(this, error -> {
+
+            if (error != null) {
+                Snackbar.make(clContenedorPrincipal, getString(R.string.error_inicio_sesion) + ": " + error, Snackbar.LENGTH_LONG).show();
+            }
+        });
+    }
+
 
 
     private boolean validarCampos() {
@@ -176,47 +268,14 @@ public class ActividadInicioSesion extends AppCompatActivity {
         etEmail = findViewById(R.id.et_email_is);
         etContrasena = findViewById(R.id.et_contrasena_is);
 
-        String email = etEmail.getText().toString().trim();
-        String contrasena = etContrasena.getText().toString().trim();
+        boolean emailValido = UtilidadValidacion.validarCampoVacio(tilEmail, etEmail, getString(R.string.error_correo));
+        boolean contrasenaValida = UtilidadValidacion.validarCampoVacio(tilContrasena, etContrasena, getString(R.string.error_contrasena));
 
-        boolean camposValidos = true;
-
-        if (email.isEmpty()) {
-            tilEmail.setError("Introduce tu correo");
-            camposValidos = false;
-        } else {
-            tilEmail.setError(null);
-        }
-
-        if (contrasena.isEmpty()) {
-            tilContrasena.setError("Introduce tu contraseña");
-            camposValidos = false;
-        } else {
-            tilContrasena.setError(null);
-        }
-
-        return camposValidos;
+        return emailValido && contrasenaValida;
     }
 
 
-    // Método para iniciar sesión con Google
-    private void iniciarSesionConGoogle() {
-        btnIniciarSesionGoogle = findViewById(R.id.btn_iniciar_sesion_google);
-        btnIniciarSesionGoogle.setOnClickListener(v -> {
-            FirebaseAutenticacion.iniciarSesionConGoogle(ActividadInicioSesion.this);
-        });
-    }
 
-    // Manejar el resultado de la autenticación de Google
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        // Verificar que el requestCode sea el que corresponde a Google Sign-In
-        if (requestCode == RC_SIGN_IN) {
-            FirebaseAutenticacion.manejarResultadoGoogleSignIn(requestCode, resultCode, data, this);
-        }
-    }
 
 
     private void irRegistro(){

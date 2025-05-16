@@ -12,6 +12,7 @@ import androidx.core.splashscreen.SplashScreen;
 
 import com.example.carnowapp.R;
 import com.example.carnowapp.utilidad.UtilidadAnimacion;
+import com.example.carnowapp.utilidad.UtilidadPreferenciasUsuario;
 
 /**
  * ActividadPantallaDeInicio es la actividad inicial de la aplicación que muestra una pantalla de inicio (SplashScreen).
@@ -26,6 +27,8 @@ public class ActividadPantallaDeInicio extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+
+        UtilidadPreferenciasUsuario.aplicarIdioma(this);
 
         // Establece el layout personalizado con el logo
         setContentView(R.layout.actividad_pantalla_de_inicio);

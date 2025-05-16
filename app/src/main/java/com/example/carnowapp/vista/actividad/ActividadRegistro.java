@@ -1,38 +1,46 @@
 package com.example.carnowapp.vista.actividad;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.lifecycle.ViewModelProvider;
+
+import com.example.carnowapp.utilidad.UtilidadDialogo;
+import com.example.carnowapp.utilidad.UtilidadMensajesTemporales;
+import com.example.carnowapp.utilidad.UtilidadValidacion;
+import com.example.carnowapp.vistamodelo.FirebaseAutenticacionVistaModelo;
+
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.graphics.Rect;
 import android.os.Bundle;
 
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Patterns;
-import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
-import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
 import com.example.carnowapp.R;
-import com.example.carnowapp.persistencia.FirebaseAutenticacion;
 import com.example.carnowapp.utilidad.UtilidadAnimacion;
+import com.example.carnowapp.utilidad.UtilidadNavegacion;
+import com.example.carnowapp.utilidad.UtilidadTeclado;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import java.lang.reflect.Method;
 
 public class ActividadRegistro extends AppCompatActivity {
 
+    private FirebaseAutenticacionVistaModelo vistaModelo;
     private ScrollView svContenedor;
     private LinearLayout lyFormularioRegistro;
     private TextInputEditText etConfirmarContrasena, etContrasena, etEmail, etNombre;
     private TextInputLayout til_nombre, tilEmail, tilContrasena, tilConfirmarContrasena;
     private TextView tvIniciarSesion;
     private MaterialButton btnRegistrar;
+    private AlertDialog dialogoDeCarga, dialogoVerificacion;
 
 
 
@@ -42,11 +50,13 @@ public class ActividadRegistro extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.registro_actividad);
 
+
+
         mostrarContenidoOcultoPorTeclado();
         mostrarContrasena();
         realizarRegistro();
-        irInicioSesion();
-        pulsarAtras();
+        irInicioSesionDesdeRegistro();
+        pulsarAtrasYVolverInicio();
         ocultarTeclado();
 
     }
@@ -55,43 +65,43 @@ public class ActividadRegistro extends AppCompatActivity {
         lyFormularioRegistro = findViewById(R.id.ly_formulario_registro);
         svContenedor = findViewById(R.id.sv_contenedor_registro_principal);
 
-        // Detectar si el teclado se está mostrando
-        svContenedor.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-            @Override
-            public boolean onPreDraw() {
-                Rect r = new Rect();
-                svContenedor.getWindowVisibleDisplayFrame(r);
-                int screenHeight = svContenedor.getHeight();
-                int keypadHeight = screenHeight - r.bottom;
+        UtilidadTeclado.ajustarPaddingAlMostrarTeclado(lyFormularioRegistro, svContenedor);
 
-                if (keypadHeight > screenHeight * 0.15) { // Si el teclado está visible
-                    // Desplazar hacia arriba
-                    lyFormularioRegistro.setPadding(0, 0, 0, keypadHeight);
-                } else {
-                    // Restaurar el padding si el teclado no está visible
-                    lyFormularioRegistro.setPadding(0, 0, 0, 0);
-                }
-                return true;
-            }
-        });
     }
 
     private void ocultarTeclado(){
        lyFormularioRegistro = findViewById(R.id.ly_formulario_registro);
         btnRegistrar = findViewById(R.id.btn_registrar);
-        UtilidadAnimacion.ocultarTecladoAlTocar(this, lyFormularioRegistro);
-        UtilidadAnimacion.ocultarTecladoAlTocar(this, btnRegistrar);
+        UtilidadTeclado.ocultarTecladoAlTocar(this, lyFormularioRegistro);
+        UtilidadTeclado.ocultarTecladoAlTocar(this, btnRegistrar);
 
 
     }
 
+    private void realizarRegistro() {
+        vistaModelo = new ViewModelProvider(this).get(FirebaseAutenticacionVistaModelo.class);
 
-    private void realizarRegistro(){
         btnRegistrar = findViewById(R.id.btn_registrar);
         etNombre = findViewById(R.id.et_nombre);
         etEmail = findViewById(R.id.et_email);
         etContrasena = findViewById(R.id.et_contrasena);
         etConfirmarContrasena = findViewById(R.id.et_confirmar_contrasena);
+
+        // Observadores (fuera del listener del botón)
+        vistaModelo.getRegistroExitoso().observe(this, exito -> {
+            if (dialogoDeCarga != null && dialogoDeCarga.isShowing()) dialogoDeCarga.dismiss();
+            if (exito) {
+                UtilidadMensajesTemporales.mostrarMensaje(findViewById(android.R.id.content), R.string.registro_exitoso);
+                mostrarDialogoVerificacionCorreo();
+            }
+        });
+
+        vistaModelo.getErrorMensajeRegistro().observe(this, mensaje -> {
+            if (dialogoDeCarga != null && dialogoDeCarga.isShowing()) dialogoDeCarga.dismiss();
+            if (mensaje != null) {
+                UtilidadMensajesTemporales.mostrarMensaje(findViewById(android.R.id.content), R.string.error_registro);
+            }
+        });
 
         btnRegistrar.setOnClickListener(view -> {
             String nombre = etNombre.getText().toString().trim();
@@ -99,15 +109,60 @@ public class ActividadRegistro extends AppCompatActivity {
             String contrasena = etContrasena.getText().toString().trim();
             String confirmarContrasena = etConfirmarContrasena.getText().toString().trim();
 
-
-            if(verificarCampos(nombre, email, contrasena, confirmarContrasena)){
-                FirebaseAutenticacion.registrarUsuario(this, email, contrasena);
+            if (verificarCampos(nombre, email, contrasena, confirmarContrasena)) {
+                dialogoDeCarga = UtilidadDialogo.crearDialogoDeCarga(ActividadRegistro.this, R.string.registrando_usuario);
+                dialogoDeCarga.show();
+                vistaModelo.registrarUsuarioCorreo(email, contrasena, nombre, this);
             }
+        });
+    }
 
+
+    private void mostrarDialogoVerificacionCorreo() {
+        final AlertDialog dialog = UtilidadDialogo.crearDialogoVerificacionCorreo(ActividadRegistro.this, (dialogInterface, i) -> {
+            irInicioSesionDesdeRegistro(); // Acción al pulsar el botón
         });
 
+        dialog.show();
 
+        vistaModelo.getCorreoVerificado().observe(this, verificado -> {
+            if (!isFinishing() && !isDestroyed()) {
+                if (verificado) {
+                    // Ejecutar método 'exito()' del tag
+                    Object tag = dialog.getWindow().getDecorView().getTag();
+                    if (tag != null) {
+                        try {
+                            Method metodo = tag.getClass().getDeclaredMethod("exito");
+                            metodo.setAccessible(true);
+                            metodo.invoke(tag);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } else {
+                    UtilidadMensajesTemporales.mostrarMensaje(findViewById(android.R.id.content), R.string.verifica_correo);
+                }
+            }
+        });
+
+        vistaModelo.verificarCorreo(); // Inicia verificación al mostrar
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        vistaModelo.verificarCorreo();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Cerrar el diálogo si la actividad se destruye
+        if (dialogoDeCarga != null && dialogoDeCarga.isShowing()) {
+            dialogoDeCarga.dismiss();
+        }
+    }
+
 
     private boolean verificarCampos(String nombre, String email, String contrasena, String confirmarContrasena) {
         til_nombre = findViewById(R.id.til_nombre);
@@ -115,45 +170,18 @@ public class ActividadRegistro extends AppCompatActivity {
         tilContrasena = findViewById(R.id.til_contrasena);
         tilConfirmarContrasena = findViewById(R.id.til_confirmar_contrasena);
 
-        boolean esValido = true;
+        TextInputEditText etNombre = findViewById(R.id.et_nombre);
+        TextInputEditText etEmail = findViewById(R.id.et_email);
+        TextInputEditText etContrasena = findViewById(R.id.et_contrasena);
 
-        // Limpiar errores anteriores
-        til_nombre.setError(null);
-        tilEmail.setError(null);
-        tilContrasena.setError(null);
-        tilConfirmarContrasena.setError(null);
+        boolean nombreValido = UtilidadValidacion.validarCampoVacio(til_nombre, etNombre, getString(R.string.error_nombre));
+        boolean emailValido = UtilidadValidacion.validarEmail(tilEmail, etEmail, getString(R.string.error_correo), getString(R.string.error_formato_correo_no_valido));
+        boolean contrasenaValida = UtilidadValidacion.validarCampoVacio(tilContrasena, etContrasena, getString(R.string.error_contrasena));
+        boolean confirmacionValida = UtilidadValidacion.validarConfirmacionContrasena(tilConfirmarContrasena, contrasena, confirmarContrasena, this);
 
-        if (nombre.isEmpty()) {
-            til_nombre.setError("Introduce tu nombre");
-            esValido = false;
-        }
-
-        if (email.isEmpty()) {
-            tilEmail.setError("Introduce tu email");
-            esValido = false;
-        } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            tilEmail.setError("Formato de email no válido");
-            esValido = false;
-        }
-
-        if (confirmarContrasena.isEmpty()) {
-            tilConfirmarContrasena.setError("Confirma tu contraseña");
-            esValido = false;
-        } else if (!confirmarContrasena.equals(contrasena)) {
-            tilConfirmarContrasena.setHelperText("Las contraseñas no coinciden");
-            tilConfirmarContrasena.setHelperTextColor(
-                    ColorStateList.valueOf(ContextCompat.getColor(ActividadRegistro.this, R.color.color_error))
-            );
-
-            esValido = false;
-
-        } else {
-            tilConfirmarContrasena.setHelperText(null);
-        }
-
-        return esValido;
-
+        return nombreValido && emailValido && contrasenaValida && confirmacionValida;
     }
+
 
     private void mostrarContrasena(){
         etContrasena = findViewById(R.id.et_contrasena);
@@ -161,53 +189,16 @@ public class ActividadRegistro extends AppCompatActivity {
         tilContrasena = findViewById(R.id.til_contrasena);
         tilConfirmarContrasena = findViewById(R.id.til_confirmar_contrasena);
 
-        etContrasena.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                String contrasena = charSequence.toString();
-
-                if (!contrasena.isEmpty()) {
-                    tilContrasena.setEndIconMode(TextInputLayout.END_ICON_PASSWORD_TOGGLE);
-
-                    if (contrasena.length() < 6) {
-                        tilContrasena.setHelperText("La contraseña debe tener al menos 6 caracteres");
-                        tilContrasena.setHelperTextColor(
-                                ColorStateList.valueOf(ContextCompat.getColor(ActividadRegistro.this, R.color.color_error))
-                        );
-
-                    } else {
-                        tilContrasena.setHelperText(null);
-                    }
-
-
-                } else {
-                    tilContrasena.setEndIconMode(TextInputLayout.END_ICON_NONE);
-                }
-            }
-            @Override
-            public void afterTextChanged(Editable editable) {}
-        });
-
-        etConfirmarContrasena.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (!charSequence.toString().isEmpty()){
-                    tilConfirmarContrasena.setEndIconMode(TextInputLayout.END_ICON_PASSWORD_TOGGLE);
-                } else {
-                    tilConfirmarContrasena.setEndIconMode(TextInputLayout.END_ICON_NONE);
-                }
-            }
-            @Override
-            public void afterTextChanged(Editable editable) {}
-        });
+        UtilidadValidacion.configurarMostrarContrasenaRegistro(
+                etContrasena,
+                tilContrasena,
+                etConfirmarContrasena,
+                tilConfirmarContrasena,
+                this
+        );
 
     }
-    private void irInicioSesion() {
+    private void irInicioSesionDesdeRegistro() {
         tvIniciarSesion = findViewById(R.id.tv_tiene_cuenta);
         if (tvIniciarSesion != null) {
             tvIniciarSesion.setOnClickListener(v -> {
@@ -220,17 +211,8 @@ public class ActividadRegistro extends AppCompatActivity {
         }
 
     }
-    private void pulsarAtras() {
-        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                Intent intent = new Intent(ActividadRegistro.this, ActividadInicioSesion.class);
-                intent.putExtra("mostrar_layout", true);
-                UtilidadAnimacion.animarDerechaAizquierda(ActividadRegistro.this, ActividadInicioSesion.class);
-                startActivity(intent);
-                finish();
-            }
-        });
+    private void pulsarAtrasYVolverInicio() {
+        UtilidadNavegacion.configurarBotonAtras(ActividadRegistro.this,  null, ActividadInicioSesion.class, true);
     }
 }
 

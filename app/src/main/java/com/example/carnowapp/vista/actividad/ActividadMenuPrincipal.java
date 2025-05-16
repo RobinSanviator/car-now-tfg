@@ -55,7 +55,6 @@ public class ActividadMenuPrincipal extends AppCompatActivity {
             // Obtener el fragmento asociado al item seleccionado desde el mapa
             Fragment fragment = mapaFragmento.get(item.getItemId());
             if (fragment != null) {
-                // Reemplazar el fragmento si existe
                 transaction.replace(R.id.fl_contenedor_menu_principal, fragment);
                 transaction.commit();
             }

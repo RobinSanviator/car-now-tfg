@@ -139,18 +139,6 @@ public class UtilidadAnimacion {
         }
     }
 
-    public static void ocultarTecladoAlTocar(Context contexto, View vista) {
-        vista.setOnTouchListener((v, event) -> {
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                InputMethodManager inputMethodManager = (InputMethodManager) contexto.getSystemService(Context.INPUT_METHOD_SERVICE);
-                View view = ((Activity) contexto).getCurrentFocus();
-                if (view != null) {
-                    inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                }
-            }
-            return false;
-        });
-    }
 
     public static void animarLogoSplash(View logo, long duracionGiro, long duracionSubida) {
         if (logo == null) return;

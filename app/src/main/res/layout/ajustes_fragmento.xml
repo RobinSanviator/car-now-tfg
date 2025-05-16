@@ -1,17 +1,214 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".vista.fragmento.FragmentoAjustes">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".vista.fragmento.FragmentoAjustes"
+    android:background="@color/color_fondo">
 
-   <com.google.android.material.button.MaterialButton
-       android:id="@+id/btn_cerrar_sesion"
-       android:layout_width="wrap_content"
+   <LinearLayout
+       android:id="@+id/ll_titulo_ajustes"
+       android:layout_width="match_parent"
        android:layout_height="wrap_content"
-       android:gravity="center"
-       android:layout_gravity="center"
-       android:textAllCaps="false"
-       android:text="@string/cerrarSesion"/>
+       android:orientation="vertical"
+       android:layout_margin="20dp"
+       android:paddingVertical="8dp"
+       android:paddingHorizontal="8dp"
+       app:layout_constraintEnd_toEndOf="parent"
+       app:layout_constraintStart_toStartOf="parent"
+       app:layout_constraintTop_toTopOf="parent">
 
-</FrameLayout>
+      <TextView
+          android:id="@+id/textView"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:gravity="center"
+          android:text="@string/textoAjustes"
+          android:textColor="@color/color_principal"
+          android:textSize="45sp"/>
+
+      <ImageView
+          android:layout_width="match_parent"
+          android:layout_height="80dp"
+          android:src="@drawable/ic_ajustes"/>
+
+      <View
+          android:id="@+id/view_divisor_ajustes"
+          android:layout_width="match_parent"
+          android:layout_height="1dp"
+          android:layout_marginTop="70dp"
+          android:background="@color/color_principal" />
+   </LinearLayout>
+
+
+   <LinearLayout
+       android:id="@+id/ll_ajustes"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:layout_margin="15dp"
+       android:background="@drawable/fondo_redondo"
+       android:orientation="vertical"
+       android:padding="8dp"
+       app:layout_constraintBottom_toBottomOf="parent"
+       app:layout_constraintEnd_toEndOf="parent"
+       app:layout_constraintHorizontal_bias="0.666"
+       app:layout_constraintStart_toStartOf="parent"
+       app:layout_constraintTop_toBottomOf="@+id/ll_titulo_ajustes"
+       app:layout_constraintVertical_bias="0.087">
+
+      <RelativeLayout
+          android:id="@+id/rl_idioma_ajustes"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:background="@color/cambiar_color_pulsar_selector"
+          android:clickable="true">
+
+         <ImageView
+             android:id="@+id/iv_idioma_ajustes"
+             android:layout_width="50dp"
+             android:layout_height="50dp"
+             android:src="@drawable/ic_idioma"
+             app:tint="@color/color_texto_primario" />
+
+         <TextView
+             android:id="@+id/tv_idioma_ajustes"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_centerVertical="true"
+             android:layout_marginStart="10dp"
+             android:layout_toEndOf="@+id/iv_idioma_ajustes"
+             android:text="@string/idioma"
+             android:textColor="@color/color_texto_primario"
+             android:textSize="18dp"
+             android:textStyle="bold" />
+
+
+      </RelativeLayout>
+
+      <View
+          android:id="@+id/view_divisor_ajustes_1"
+          android:layout_width="match_parent"
+          android:layout_height="1dp"
+          android:layout_marginTop="10dp"
+          android:layout_marginBottom="10dp"
+          android:background="@color/color_principal" />
+
+
+      <RelativeLayout
+          android:id="@+id/rl_editar_perfil_ajustes"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:background="@color/cambiar_color_pulsar_selector"
+          android:clickable="true">
+
+         <ImageView
+             android:id="@+id/iv_editar_perfil_ajustes"
+             android:layout_width="50dp"
+             android:layout_height="50dp"
+             android:src="@drawable/ic_perfil"
+             app:tint="@color/color_texto_primario" />
+
+         <TextView
+             android:id="@+id/tv_editar_perfil_ajustes"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_centerVertical="true"
+             android:layout_marginStart="10dp"
+             android:layout_toEndOf="@+id/iv_editar_perfil_ajustes"
+             android:text="@string/perfil"
+             android:textColor="@color/color_texto_primario"
+             android:textSize="18dp"
+             android:textStyle="bold" />
+
+
+      </RelativeLayout>
+
+      <View
+          android:id="@+id/view_divisor_ajustes_2"
+          android:layout_width="match_parent"
+          android:layout_height="1dp"
+          android:layout_marginTop="10dp"
+          android:layout_marginBottom="10dp"
+          android:background="@color/color_principal" />
+
+      <RelativeLayout
+          android:id="@+id/rl_cerrar_sesion_ajustes"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:background="@color/cambiar_color_pulsar_selector"
+          android:clickable="true">
+
+         <ImageView
+             android:id="@+id/iv_cerrar_sesion_ajustes"
+             android:layout_width="50dp"
+             android:layout_height="50dp"
+             android:src="@drawable/ic_cerrar_sesion"
+             app:tint="@color/color_texto_primario" />
+
+         <TextView
+             android:id="@+id/tv_cerrar_sesion_ajustes"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_centerVertical="true"
+             android:layout_marginStart="10dp"
+             android:layout_toEndOf="@+id/iv_cerrar_sesion_ajustes"
+             android:text="@string/cerrarSesion"
+             android:textColor="@color/color_texto_primario"
+             android:textSize="18dp"
+             android:textStyle="bold" />
+
+
+      </RelativeLayout>
+
+      <View
+          android:id="@+id/view_divisor_ajustes_3"
+          android:layout_width="match_parent"
+          android:layout_height="1dp"
+          android:layout_marginTop="10dp"
+          android:layout_marginBottom="10dp"
+          android:background="@color/color_principal" />
+
+
+      <RelativeLayout
+          android:id="@+id/rl_salir_ajustes"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:background="@color/cambiar_color_pulsar_selector"
+          android:clickable="true">
+
+         <ImageView
+             android:id="@+id/iv_salir_ajustes"
+             android:layout_width="50dp"
+             android:layout_height="50dp"
+             android:src="@drawable/ic_salir"
+             app:tint="@color/color_texto_primario" />
+
+         <TextView
+             android:id="@+id/textViewSalirAjustesAdmin"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_centerVertical="true"
+             android:layout_marginStart="10dp"
+             android:layout_toEndOf="@+id/iv_salir_ajustes"
+             android:text="@string/salir"
+             android:textColor="@color/color_texto_primario"
+             android:textSize="18dp"
+             android:textStyle="bold" />
+
+
+      </RelativeLayout>
+
+   </LinearLayout>
+
+   <ImageView
+       android:layout_width="match_parent"
+       android:layout_height="200dp"
+       android:layout_margin="20dp"
+       android:src="@drawable/logo_carnow"
+       app:layout_constraintBottom_toBottomOf="parent"
+       app:layout_constraintEnd_toEndOf="parent"
+       app:layout_constraintStart_toStartOf="parent"
+       app:layout_constraintTop_toBottomOf="@+id/ll_ajustes" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
