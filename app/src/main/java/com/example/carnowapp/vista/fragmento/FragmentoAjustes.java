@@ -15,11 +15,11 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import com.example.carnowapp.R;
-import com.example.carnowapp.utilidad.UtilidadDialogo;
-import com.example.carnowapp.utilidad.UtilidadNavegacion;
-import com.example.carnowapp.utilidad.UtilidadPreferenciasUsuario;
-import com.example.carnowapp.vista.actividad.ActividadInicioSesion;
-import com.example.carnowapp.vistamodelo.FirebaseAutenticacionVistaModelo;
+import com.example.carnowapp.utilidad.DialogoUtilidad;
+import com.example.carnowapp.utilidad.NavegacionUtilidad;
+import com.example.carnowapp.vista.actividad.InicioSesionActividad;
+import com.example.carnowapp.vistamodelo.AjustesVistaModelo;
+import com.example.carnowapp.vistamodelo.AutenticacionVistaModelo;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import androidx.appcompat.app.AlertDialog;
@@ -31,11 +31,13 @@ public class FragmentoAjustes extends Fragment {
 
     private RelativeLayout rlIdioma, rlEditarPerfil, rlCerrarSesion, rlSalir;
     private AlertDialog dialogoDeCarga;
+    private AjustesVistaModelo ajustesVistaModelo;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        ajustesVistaModelo = new ViewModelProvider(this).get(AjustesVistaModelo.class);
+        ajustesVistaModelo.inicializar(requireContext());
     }
 
     @Override
@@ -58,13 +60,13 @@ public class FragmentoAjustes extends Fragment {
 
         rlCerrarSesion.setOnClickListener(vCerrarSesion -> {
             Context contexto = vista.getContext();
-            AlertDialog dialogoConfirmacion = UtilidadDialogo.crearDialogoConfirmacion(
+            AlertDialog dialogoConfirmacion = DialogoUtilidad.crearDialogoConfirmacion(
                     contexto,
                     contexto.getString(R.string.cerrarSesion),
                     contexto.getString(R.string.cerrar_sesion_pregunta),
                     R.drawable.ic_cerrar_sesion,
                     contexto.getString(R.string.si),
-                    (dialog, which) -> cerrarSesion(vista),
+                    (dialog, which) -> cerrarSesion(),
                     contexto.getString(R.string.no),
                     (dialog, which) -> dialog.dismiss()
             );
@@ -77,13 +79,13 @@ public class FragmentoAjustes extends Fragment {
 
         rlSalir.setOnClickListener(vSalir ->{
             Context contexto = vista.getContext();
-            AlertDialog dialogoConfirmacion = UtilidadDialogo.crearDialogoConfirmacion(
+            AlertDialog dialogoConfirmacion = DialogoUtilidad.crearDialogoConfirmacion(
                     contexto,
                     contexto.getString(R.string.salir),
                     contexto.getString(R.string.salir_pregunta),
                     R.drawable.ic_cerrar_sesion,
                     contexto.getString(R.string.si),
-                    (dialog, which) -> salir(vista),
+                    (dialog, which) -> salir(contexto),
                     contexto.getString(R.string.no),
                     (dialog, which) -> dialog.dismiss()
             );
@@ -92,31 +94,22 @@ public class FragmentoAjustes extends Fragment {
 
     }
 
-    private void cerrarSesion(View vista) {
-        Context contexto = vista.getContext();
-
-        FirebaseAutenticacionVistaModelo vistaModelo = new ViewModelProvider(requireActivity()).get(FirebaseAutenticacionVistaModelo.class);
-
-        // Observar si se ha cerrado sesión correctamente
-        vistaModelo.getSesionCerrada().observe(getViewLifecycleOwner(), cerrada -> {
-            if (cerrada != null && cerrada) {
-                UtilidadPreferenciasUsuario.cerrarSesion();
-                UtilidadNavegacion.redirigirA(getActivity(), ActividadInicioSesion.class);
+    private void cerrarSesion() {
+        ajustesVistaModelo.getSesionCerrada().observe(getViewLifecycleOwner(), cerrada -> {
+            if (Boolean.TRUE.equals(cerrada)) {
+                NavegacionUtilidad.redirigirA(requireActivity(), InicioSesionActividad.class);
             }
         });
 
-        // Llamar al cierre de sesión
-        vistaModelo.cerrarSesion(contexto);
+        ajustesVistaModelo.cerrarSesion(requireContext());
     }
 
-    private void salir(View vista){
-        Context contexto = vista.getContext();
+    private void salir(Context contexto) {
         if (contexto instanceof Activity) {
-            Activity activity = (Activity) contexto;
-            activity.finishAffinity();
+            ((Activity) contexto).finishAffinity();
         }
-
     }
+
 
     private void editarPerfil(){
 
@@ -135,8 +128,7 @@ public class FragmentoAjustes extends Fragment {
                 contexto.getString(R.string.idioma_ingles)
         };
 
-
-        Drawable icono = UtilidadDialogo.obtenerIconoTintado(contexto, R.drawable.ic_idioma);
+        Drawable icono = DialogoUtilidad.obtenerIconoTintado(contexto, R.drawable.ic_idioma);
 
         new MaterialAlertDialogBuilder(contexto)
                 .setTitle(contexto.getString(R.string.titulo_selector_idioma))
@@ -145,47 +137,43 @@ public class FragmentoAjustes extends Fragment {
                     String idiomaSeleccionado = idiomas[which];
                     String codigoIdioma = (which == 0) ? "es" : "en";
 
-                    UtilidadDialogo.crearDialogoConfirmacion(
+                    AlertDialog confirmacion = DialogoUtilidad.crearDialogoConfirmacion(
                             contexto,
                             contexto.getString(R.string.cambiar_idioma_titulo),
                             contexto.getString(R.string.cambiar_idioma_pregunta, idiomaSeleccionado),
                             R.drawable.ic_idioma,
                             contexto.getString(R.string.si),
-                            (d, w) -> {
-                                AlertDialog dialogoDeCarga = UtilidadDialogo.crearDialogoDeCarga(contexto, R.string.cambiar_idioma);
-                                dialogoDeCarga.show();
-
-                                new Handler().postDelayed(() -> {
-                                    actualizarIdioma(contexto, codigoIdioma, idiomaSeleccionado, dialogoDeCarga);
-                                }, 1000);
-                            },
+                            (d, w) -> cambiarIdioma(contexto, codigoIdioma),
                             contexto.getString(R.string.no),
                             (d, w) -> d.dismiss()
-                    ).show();
+                    );
+                    confirmacion.show();
                 })
-                .setBackground(UtilidadDialogo.crearColor(contexto, R.color.color_fondo_variante))
+                .setBackground(DialogoUtilidad.crearColor(contexto, R.color.color_fondo_variante))
                 .setCancelable(true)
                 .show();
     }
 
-    private static void actualizarIdioma(Context contexto, String idioma, String idiomaNombre, AlertDialog dialogoDeCarga) {
-        UtilidadPreferenciasUsuario.guardarIdioma(idioma);
-        UtilidadPreferenciasUsuario.aplicarIdioma(contexto);
 
-        dialogoDeCarga.dismiss();
-
-        Activity actividad = (Activity) contexto;
-        Intent intent = actividad.getIntent();
+    private void cambiarIdioma(Context contexto, String codigoIdioma) {
+        dialogoDeCarga = DialogoUtilidad.crearDialogoDeCarga(contexto, R.string.cambiar_idioma);
+        dialogoDeCarga.show();
 
         new Handler().postDelayed(() -> {
+            ajustesVistaModelo.guardarIdioma(codigoIdioma);
+            ajustesVistaModelo.aplicarIdioma(contexto);
+
+            dialogoDeCarga.dismiss();
+
+            Activity actividad = (Activity) contexto;
+            Intent intent = actividad.getIntent();
+
             actividad.finish();
-            // Transición suave: salida
             actividad.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-
             actividad.startActivity(intent);
-
             actividad.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-        }, 300);
+
+        }, 1000);
     }
 
 }

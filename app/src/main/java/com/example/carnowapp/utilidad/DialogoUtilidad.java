@@ -20,7 +20,7 @@ import androidx.core.content.ContextCompat;
 import com.example.carnowapp.R;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-public class UtilidadDialogo {
+public class DialogoUtilidad {
 
     public static AlertDialog crearDialogoDeCarga(Context contexto, int idRecursoTexto) {
         ProgressBar progressBar = new ProgressBar(contexto);

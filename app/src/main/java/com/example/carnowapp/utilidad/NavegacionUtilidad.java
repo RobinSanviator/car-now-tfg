@@ -12,9 +12,9 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.carnowapp.vista.actividad.ActividadInicioSesion;
+import com.example.carnowapp.vista.actividad.InicioSesionActividad;
 
-public class UtilidadNavegacion {
+public class NavegacionUtilidad {
 
 
     public static void redirigirA(Activity origen, Class<?> destino) {
@@ -34,12 +34,12 @@ public class UtilidadNavegacion {
                     @Override
                     public void handleOnBackPressed() {
                         if (vistaOcultable != null && vistaOcultable.getVisibility() == View.VISIBLE) {
-                            UtilidadAnimacion.animarContraer(vistaOcultable, actividad);
+                            AnimacionUtilidad.animarContraer(vistaOcultable, actividad);
                         } else if (destino != null) {
                             Intent intent = new Intent(actividad, destino);
                             intent.putExtra("mostrar_layout", true);
                             if (usarAnimacion) {
-                                UtilidadAnimacion.animarDerechaAizquierda(actividad, destino);
+                                AnimacionUtilidad.animarDerechaAizquierda(actividad, destino);
                             }
                             actividad.startActivity(intent);
                             actividad.finish();
@@ -53,9 +53,9 @@ public class UtilidadNavegacion {
     public static void redirigirDeRegistroAInicio(Activity actividad){
 
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            Intent intentIrInicio = new Intent(actividad, ActividadInicioSesion.class);
+            Intent intentIrInicio = new Intent(actividad, InicioSesionActividad.class);
             intentIrInicio.putExtra("mostrar_layout", true);
-            UtilidadAnimacion.animarDerechaAizquierda(actividad, ActividadInicioSesion.class);
+            AnimacionUtilidad.animarDerechaAizquierda(actividad, InicioSesionActividad.class);
             startActivity(actividad, intentIrInicio, null);
             actividad.finish();
         }, 300);

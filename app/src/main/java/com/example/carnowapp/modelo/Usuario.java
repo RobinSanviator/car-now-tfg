@@ -1,22 +1,25 @@
 package com.example.carnowapp.modelo;
 
+import java.lang.Integer;
+
 public class Usuario {
     private int id;
     private String firebaseUID;
     private String nombre;
     private String email;
+    private int telefono;
     private String dni;
     private String tarjeta;
-
 
     public Usuario() {}
 
 
-    public Usuario(int id, String firebaseUID, String nombre, String email, String dni, String tarjeta) {
+    public Usuario(int id, String firebaseUID, String nombre, String email, int telefono, String dni, String tarjeta) {
         this.id = id;
         this.firebaseUID = firebaseUID;
         this.nombre = nombre;
         this.email = email;
+        this.telefono = telefono;
         this.dni = dni;
         this.tarjeta = tarjeta;
     }
@@ -53,6 +56,15 @@ public class Usuario {
         this.email = email;
     }
 
+
+    public void setTelefono(int telefono) {
+        this.telefono = telefono;
+    }
+
+    public Integer getTelefono() {
+        return telefono;
+    }
+
     public String getDni() {
         return dni;
     }
@@ -68,6 +80,4 @@ public class Usuario {
     public void setTarjeta(String tarjeta) {
         this.tarjeta = tarjeta;
     }
-
 }
-

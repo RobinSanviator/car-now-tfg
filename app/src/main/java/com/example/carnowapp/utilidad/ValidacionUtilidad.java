@@ -12,7 +12,7 @@ import com.example.carnowapp.R;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
-public class UtilidadValidacion{
+public class ValidacionUtilidad {
 
     public static boolean validarCampoVacio(TextInputLayout layout, TextInputEditText campo, String mensajeError) {
         String texto = campo.getText() != null ? campo.getText().toString().trim() : "";

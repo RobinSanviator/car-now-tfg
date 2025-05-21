@@ -18,7 +18,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ActividadMenuPrincipal extends AppCompatActivity {
+public class MenuPrincipalActividad extends AppCompatActivity {
 
     private FrameLayout flContenedorMenuPrincipal;
     private BottomNavigationView bnvMenuPrincipal;

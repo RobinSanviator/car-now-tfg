@@ -3,12 +3,11 @@ package com.example.carnowapp.vista.actividad;
 import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.carnowapp.utilidad.UtilidadDialogo;
-import com.example.carnowapp.utilidad.UtilidadMensajesTemporales;
-import com.example.carnowapp.utilidad.UtilidadValidacion;
-import com.example.carnowapp.vistamodelo.FirebaseAutenticacionVistaModelo;
+import com.example.carnowapp.utilidad.DialogoUtilidad;
+import com.example.carnowapp.utilidad.MensajesUtilidad;
+import com.example.carnowapp.utilidad.ValidacionUtilidad;
+import com.example.carnowapp.vistamodelo.AutenticacionVistaModelo;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -20,20 +19,18 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.carnowapp.R;
-import com.example.carnowapp.utilidad.UtilidadAnimacion;
-import com.example.carnowapp.utilidad.UtilidadNavegacion;
-import com.example.carnowapp.utilidad.UtilidadTeclado;
+import com.example.carnowapp.utilidad.AnimacionUtilidad;
+import com.example.carnowapp.utilidad.NavegacionUtilidad;
+import com.example.carnowapp.utilidad.TecladoUtilidad;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 import java.lang.reflect.Method;
 
-public class ActividadRegistro extends AppCompatActivity {
+public class RegistroActividad extends AppCompatActivity {
 
-    private FirebaseAutenticacionVistaModelo vistaModelo;
+    private AutenticacionVistaModelo vistaModelo;
     private ScrollView svContenedor;
     private LinearLayout lyFormularioRegistro;
     private TextInputEditText etConfirmarContrasena, etContrasena, etEmail, etNombre;
@@ -51,7 +48,7 @@ public class ActividadRegistro extends AppCompatActivity {
         setContentView(R.layout.registro_actividad);
 
 
-
+        inicializarVistas();
         mostrarContenidoOcultoPorTeclado();
         mostrarContrasena();
         realizarRegistro();
@@ -65,21 +62,39 @@ public class ActividadRegistro extends AppCompatActivity {
         lyFormularioRegistro = findViewById(R.id.ly_formulario_registro);
         svContenedor = findViewById(R.id.sv_contenedor_registro_principal);
 
-        UtilidadTeclado.ajustarPaddingAlMostrarTeclado(lyFormularioRegistro, svContenedor);
+        TecladoUtilidad.ajustarPaddingAlMostrarTeclado(lyFormularioRegistro, svContenedor);
 
     }
 
     private void ocultarTeclado(){
        lyFormularioRegistro = findViewById(R.id.ly_formulario_registro);
         btnRegistrar = findViewById(R.id.btn_registrar);
-        UtilidadTeclado.ocultarTecladoAlTocar(this, lyFormularioRegistro);
-        UtilidadTeclado.ocultarTecladoAlTocar(this, btnRegistrar);
+        TecladoUtilidad.ocultarTecladoAlTocar(this, lyFormularioRegistro);
+        TecladoUtilidad.ocultarTecladoAlTocar(this, btnRegistrar);
 
 
     }
 
+    private void inicializarVistas(){
+        lyFormularioRegistro = findViewById(R.id.ly_formulario_registro);
+        svContenedor = findViewById(R.id.sv_contenedor_registro_principal);
+        btnRegistrar = findViewById(R.id.btn_registrar);
+        etNombre = findViewById(R.id.et_nombre);
+        etEmail = findViewById(R.id.et_email);
+        etContrasena = findViewById(R.id.et_contrasena);
+        etConfirmarContrasena = findViewById(R.id.et_confirmar_contrasena);
+
+        til_nombre = findViewById(R.id.til_nombre);
+        tilEmail = findViewById(R.id.til_email);
+        tilContrasena = findViewById(R.id.til_contrasena);
+        tilConfirmarContrasena = findViewById(R.id.til_confirmar_contrasena);
+
+        vistaModelo = new ViewModelProvider(this).get(AutenticacionVistaModelo.class);
+
+    }
+
     private void realizarRegistro() {
-        vistaModelo = new ViewModelProvider(this).get(FirebaseAutenticacionVistaModelo.class);
+        vistaModelo = new ViewModelProvider(this).get(AutenticacionVistaModelo.class);
 
         btnRegistrar = findViewById(R.id.btn_registrar);
         etNombre = findViewById(R.id.et_nombre);
@@ -91,7 +106,7 @@ public class ActividadRegistro extends AppCompatActivity {
         vistaModelo.getRegistroExitoso().observe(this, exito -> {
             if (dialogoDeCarga != null && dialogoDeCarga.isShowing()) dialogoDeCarga.dismiss();
             if (exito) {
-                UtilidadMensajesTemporales.mostrarMensaje(findViewById(android.R.id.content), R.string.registro_exitoso);
+                MensajesUtilidad.mostrarMensaje(findViewById(android.R.id.content), R.string.registro_exitoso);
                 mostrarDialogoVerificacionCorreo();
             }
         });
@@ -99,7 +114,7 @@ public class ActividadRegistro extends AppCompatActivity {
         vistaModelo.getErrorMensajeRegistro().observe(this, mensaje -> {
             if (dialogoDeCarga != null && dialogoDeCarga.isShowing()) dialogoDeCarga.dismiss();
             if (mensaje != null) {
-                UtilidadMensajesTemporales.mostrarMensaje(findViewById(android.R.id.content), R.string.error_registro);
+                MensajesUtilidad.mostrarMensaje(findViewById(android.R.id.content), R.string.error_registro);
             }
         });
 
@@ -110,17 +125,20 @@ public class ActividadRegistro extends AppCompatActivity {
             String confirmarContrasena = etConfirmarContrasena.getText().toString().trim();
 
             if (verificarCampos(nombre, email, contrasena, confirmarContrasena)) {
-                dialogoDeCarga = UtilidadDialogo.crearDialogoDeCarga(ActividadRegistro.this, R.string.registrando_usuario);
+                dialogoDeCarga = DialogoUtilidad.crearDialogoDeCarga(RegistroActividad.this, R.string.registrando_usuario);
                 dialogoDeCarga.show();
-                vistaModelo.registrarUsuarioCorreo(email, contrasena, nombre, this);
+                vistaModelo.registrarUsuarioCorreo(email, contrasena, nombre);
             }
         });
     }
 
 
     private void mostrarDialogoVerificacionCorreo() {
-        final AlertDialog dialog = UtilidadDialogo.crearDialogoVerificacionCorreo(ActividadRegistro.this, (dialogInterface, i) -> {
-            irInicioSesionDesdeRegistro(); // Acción al pulsar el botón
+        final AlertDialog dialog = DialogoUtilidad.crearDialogoVerificacionCorreo(RegistroActividad.this, (dialogInterface, i) -> {
+            Intent intent = new Intent(RegistroActividad.this, InicioSesionActividad.class);
+            intent.putExtra("mostrar_layout", true);
+            startActivity(intent);
+            finish();
         });
 
         dialog.show();
@@ -140,7 +158,7 @@ public class ActividadRegistro extends AppCompatActivity {
                         }
                     }
                 } else {
-                    UtilidadMensajesTemporales.mostrarMensaje(findViewById(android.R.id.content), R.string.verifica_correo);
+                    MensajesUtilidad.mostrarMensaje(findViewById(android.R.id.content), R.string.mensaje_verificacion_correo_snackbar);
                 }
             }
         });
@@ -161,6 +179,9 @@ public class ActividadRegistro extends AppCompatActivity {
         if (dialogoDeCarga != null && dialogoDeCarga.isShowing()) {
             dialogoDeCarga.dismiss();
         }
+        if (vistaModelo != null) {
+            vistaModelo.cancelarVerificacionCorreo();
+        }
     }
 
 
@@ -174,10 +195,10 @@ public class ActividadRegistro extends AppCompatActivity {
         TextInputEditText etEmail = findViewById(R.id.et_email);
         TextInputEditText etContrasena = findViewById(R.id.et_contrasena);
 
-        boolean nombreValido = UtilidadValidacion.validarCampoVacio(til_nombre, etNombre, getString(R.string.error_nombre));
-        boolean emailValido = UtilidadValidacion.validarEmail(tilEmail, etEmail, getString(R.string.error_correo), getString(R.string.error_formato_correo_no_valido));
-        boolean contrasenaValida = UtilidadValidacion.validarCampoVacio(tilContrasena, etContrasena, getString(R.string.error_contrasena));
-        boolean confirmacionValida = UtilidadValidacion.validarConfirmacionContrasena(tilConfirmarContrasena, contrasena, confirmarContrasena, this);
+        boolean nombreValido = ValidacionUtilidad.validarCampoVacio(til_nombre, etNombre, getString(R.string.error_nombre));
+        boolean emailValido = ValidacionUtilidad.validarEmail(tilEmail, etEmail, getString(R.string.error_correo), getString(R.string.error_formato_correo_no_valido));
+        boolean contrasenaValida = ValidacionUtilidad.validarCampoVacio(tilContrasena, etContrasena, getString(R.string.error_contrasena));
+        boolean confirmacionValida = ValidacionUtilidad.validarConfirmacionContrasena(tilConfirmarContrasena, contrasena, confirmarContrasena, this);
 
         return nombreValido && emailValido && contrasenaValida && confirmacionValida;
     }
@@ -189,7 +210,7 @@ public class ActividadRegistro extends AppCompatActivity {
         tilContrasena = findViewById(R.id.til_contrasena);
         tilConfirmarContrasena = findViewById(R.id.til_confirmar_contrasena);
 
-        UtilidadValidacion.configurarMostrarContrasenaRegistro(
+        ValidacionUtilidad.configurarMostrarContrasenaRegistro(
                 etContrasena,
                 tilContrasena,
                 etConfirmarContrasena,
@@ -202,9 +223,9 @@ public class ActividadRegistro extends AppCompatActivity {
         tvIniciarSesion = findViewById(R.id.tv_tiene_cuenta);
         if (tvIniciarSesion != null) {
             tvIniciarSesion.setOnClickListener(v -> {
-                Intent intentIrInicio = new Intent(ActividadRegistro.this, ActividadInicioSesion.class);
+                Intent intentIrInicio = new Intent(RegistroActividad.this, InicioSesionActividad.class);
                 intentIrInicio.putExtra("mostrar_layout", true);
-                UtilidadAnimacion.animarDerechaAizquierda(ActividadRegistro.this, ActividadInicioSesion.class);
+                AnimacionUtilidad.animarDerechaAizquierda(RegistroActividad.this, InicioSesionActividad.class);
                 startActivity(intentIrInicio);
                 finish();
             });
@@ -212,7 +233,7 @@ public class ActividadRegistro extends AppCompatActivity {
 
     }
     private void pulsarAtrasYVolverInicio() {
-        UtilidadNavegacion.configurarBotonAtras(ActividadRegistro.this,  null, ActividadInicioSesion.class, true);
+        NavegacionUtilidad.configurarBotonAtras(RegistroActividad.this,  null, InicioSesionActividad.class, true);
     }
 }
 

@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.carnowapp.R;
-import com.example.carnowapp.vista.adaptador.AdaptadorCoche;
+import com.example.carnowapp.vista.adaptador.CocheAdaptador;
 import com.example.carnowapp.modelo.Coche;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -42,7 +42,7 @@ public class FragmentoCatalogo extends Fragment {
         listaToyota.add(new Coche("Toyota Camry", R.drawable.toyota2));
 
         // Configura el adaptador con los datos de prueba para Toyota
-        recyclerToyota.setAdapter(new AdaptadorCoche(listaToyota));
+        recyclerToyota.setAdapter(new CocheAdaptador(listaToyota));
 
         // Configurar RecyclerView para BMW
         RecyclerView recyclerBMW = vista.findViewById(R.id.recycler_bmw);
@@ -54,7 +54,7 @@ public class FragmentoCatalogo extends Fragment {
         listaBMW.add(new Coche("BMW X5", R.drawable.bm1));
 
         // Configura el adaptador con los datos de prueba para BMW
-        recyclerBMW.setAdapter(new AdaptadorCoche(listaBMW));
+        recyclerBMW.setAdapter(new CocheAdaptador(listaBMW));
 
 
 

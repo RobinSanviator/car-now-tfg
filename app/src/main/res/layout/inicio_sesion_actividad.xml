@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/coche_fondo"
-    tools:context=".vista.actividad.ActividadInicioSesion">
+    tools:context=".vista.actividad.InicioSesionActividad">
 
     <ImageView
         android:id="@+id/iv_logo"

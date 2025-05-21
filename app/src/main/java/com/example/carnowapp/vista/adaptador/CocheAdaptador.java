@@ -13,11 +13,11 @@ import com.example.carnowapp.modelo.Coche;
 
 import java.util.List;
 
-public class AdaptadorCoche extends RecyclerView.Adapter<AdaptadorCoche.ViewHolder> {
+public class CocheAdaptador extends RecyclerView.Adapter<CocheAdaptador.ViewHolder> {
 
     private List<Coche> listaCoches;
 
-    public AdaptadorCoche(List<Coche> listaCoches) {
+    public CocheAdaptador(List<Coche> listaCoches) {
         this.listaCoches = listaCoches;
     }
 

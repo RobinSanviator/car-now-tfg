@@ -12,7 +12,6 @@
     <string name="tiene_cuenta">Have an account? Log in</string>
     <string name="o">Or</string>
     <string name="inicio_sesion_google">Log in with Google</string>
-    <string name="default_web_client_id">689400737896-ibsr16sh8rgg9uadl3dl21fc9497oiuk.apps.googleusercontent.com</string>
     <string name="error_correo">Enter your email</string>
     <string name="error_contrasena">Enter your password</string>
     <string name="error_nombre">Enter your name</string>
@@ -60,6 +59,35 @@
     <string name="datos_actualizados_correctamente">Data updated successfully</string>
     <string name="error_al_actualizar">Error updating: </string>
     <string name="no_modificar_email">Email modification is not allowed</string>
+    <string name="registro_exitoso">Successful registration</string>
+    <string name="error_registro">Error registering. Please try again</string>
+    <string name="registrando_usuario">Registering user...</string>
+    <string name="iniciando_sesion">Signing in...</string>
+    <string name="autenticando_google">Authenticating with Google</string>
+    <string name="vinculando_google">Linking Google account...</string>
+    <string name="cerrando_sesion">Signing out...</string>
+    <string name="inicio_sesion_exitoso">Sign-in successful</string>
+    <string name="error_inicio_sesion">Error signing in</string>
+    <string name="error_usuario_no_registrado">User is not registered.</string>
+    <string name="error_credenciales_invalidas">Email or password is incorrect.</string>
+    <string name="error_credenciales_no_validas">Credentials are not valid.</string>
+    <string name="error_autenticacion_generico">An error occurred signing in. Please try again.</string>
+    <string name="error_contrasena_min_6">Password must be at least 6 characters</string>
+    <string name="error_correo_verificacion">Error sending verification email.</string>
+    <string name="error_registro_usuario">Error registering user: </string>
+    <string name="error_desconocido">Unknown error</string>
+    <string name="mensaje_verificacion_correo">To sign in, you must verify your email. Please check your inbox and confirm your email.</string>
+    <string name="mensaje_verificacion_correo_snackbar">To sign in, you must verify your email.</string>
+    <string name="mensaje_verificacion_exitosa">Email verified successfully! You can now sign in.</string>
+    <string name="mensaje_verificacion_error">Verification email could not be sent. Please try again.</string>
+    <string name="titulo_verificacion_correo">Email verification</string>
+    <string name="error_servidor">Server error. Please try again later.</string>
+    <string name="error_campos_vacios">All fields are required.</string>
+    <string name="boton_aceptar">Accept</string>
+    <string name="error_guardar_usuario">Error saving user</string>
+    <string name="boton_iniciar_sesion">Go to sign-in</string>
+    <string name="verifica_correo">Please verify your email to sign in.</string>
+    <string name="telefono">Phone</string>
 
 
 </resources>

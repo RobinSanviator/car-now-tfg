@@ -6,14 +6,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
-import android.view.animation.AnticipateInterpolator;
-import android.view.animation.CycleInterpolator;
 import android.view.animation.DecelerateInterpolator;
-import android.view.animation.OvershootInterpolator;
 import android.view.inputmethod.InputMethodManager;
 
 import com.example.carnowapp.R;
@@ -22,7 +18,7 @@ import com.example.carnowapp.R;
  * Clase utilitaria que proporciona métodos para realizar animaciones comunes en vistas.
  * Las animaciones incluyen aumento de tamaño, rebote, expansión y contracción de vistas.
  */
-public class UtilidadAnimacion {
+public class AnimacionUtilidad {
 
     /**
      * Realiza una animación de aumento de tamaño de la vista con un rebote opcional al final.

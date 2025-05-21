@@ -1,8 +1,5 @@
 package com.example.carnowapp.vista.fragmento;
 
-import static com.example.carnowapp.utilidad.UtilidadTeclado.ocultarTeclado;
-
-import android.content.Context;
 import android.os.Bundle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -13,12 +10,13 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ScrollView;
 
 import com.example.carnowapp.R;
 import com.example.carnowapp.modelo.Usuario;
-import com.example.carnowapp.utilidad.UtilidadDialogo;
-import com.example.carnowapp.utilidad.UtilidadTeclado;
+import com.example.carnowapp.utilidad.DialogoUtilidad;
+import com.example.carnowapp.utilidad.TecladoUtilidad;
 import com.example.carnowapp.vistamodelo.UsuarioVistaModelo;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.imageview.ShapeableImageView;
@@ -27,13 +25,14 @@ import com.google.android.material.textfield.TextInputEditText;
 
 public class FragmentoPerfil extends Fragment {
 
-    private TextInputEditText etNombre, etEmail, etDni;
+    private TextInputEditText etNombre, etEmail, etTelefono, etDni;
     private ShapeableImageView ivPerfil;
     private MaterialButton btnGuardarCambios;
     private ScrollView svContenedorPrincipal;
     private ConstraintLayout clContenedorPerfil;
-    private String nombreOriginal = "", emailOriginal = "", dniOriginal = "";
+    private String nombreOriginal = "", emailOriginal = "", telefonoOriginal = "", dniOriginal = "";
     private UsuarioVistaModelo usuarioVistaModelo;
+    private AlertDialog dialogoCarga;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,6 +48,7 @@ public class FragmentoPerfil extends Fragment {
         configurarVistaModelo();
         observarDatosUsuario();
         mostrarContenidoOcultoPorTeclado();
+        btnGuardarCambios.setOnClickListener(v -> guardarCambios()  );
         return vista;
     }
 
@@ -62,6 +62,7 @@ public class FragmentoPerfil extends Fragment {
                 // Mostrar el botón solo si hay cambios en los campos
                 boolean haCambiado = !etNombre.getText().toString().equals(nombreOriginal)
                         || !etEmail.getText().toString().equals(emailOriginal)
+                        || !etTelefono.getText().toString().equals(telefonoOriginal)
                         || !etDni.getText().toString().equals(dniOriginal);
                 btnGuardarCambios.setVisibility(haCambiado ? View.VISIBLE : View.GONE);
             }
@@ -72,6 +73,7 @@ public class FragmentoPerfil extends Fragment {
 
         etNombre.addTextChangedListener(watcher);
         etEmail.addTextChangedListener(watcher);
+        etTelefono.addTextChangedListener(watcher);
         etDni.addTextChangedListener(watcher);
 
         // Desactivar la edición y el foco en el campo de correo electrónico
@@ -87,6 +89,7 @@ public class FragmentoPerfil extends Fragment {
     private void inicializarVistas(View vista) {
         etNombre = vista.findViewById(R.id.et_nombre);
         etEmail = vista.findViewById(R.id.et_email);
+        etTelefono = vista.findViewById(R.id.et_telefono);
         etDni = vista.findViewById(R.id.et_dni);
         ivPerfil = vista.findViewById(R.id.iv_perfil);
         btnGuardarCambios = vista.findViewById(R.id.btn_guardar_cambios);
@@ -104,23 +107,37 @@ public class FragmentoPerfil extends Fragment {
             if (usuario != null) {
                 nombreOriginal = usuario.getNombre();
                 emailOriginal = usuario.getEmail();
+                telefonoOriginal = String.valueOf(usuario.getTelefono());
                 dniOriginal = usuario.getDni();
                 etNombre.setText(nombreOriginal);
                 etEmail.setText(emailOriginal);
+                etTelefono.setText(telefonoOriginal);
                 etDni.setText(dniOriginal);
             }
         });
 
         usuarioVistaModelo.getCargandoLiveData().observe(getViewLifecycleOwner(), cargando -> {
+            if (!isAdded() || getContext() == null) return;
+
             if (cargando) {
-                UtilidadDialogo.crearDialogoDeCarga(requireContext(), R.string.actualizando_perfil).show();
+                if (dialogoCarga == null) {
+                    dialogoCarga = DialogoUtilidad.crearDialogoDeCarga(requireContext(), R.string.actualizando_perfil);
+                    try {
+                        dialogoCarga.show();
+                    } catch (WindowManager.BadTokenException e) {
+                        dialogoCarga = null;
+                    }
+                }
             } else {
-                // Cerrar diálogo si está abierto (según implementación de UtilidadDialogo)
+                if (dialogoCarga != null && dialogoCarga.isShowing()) {
+                    dialogoCarga.dismiss();
+                    dialogoCarga = null;
+                }
             }
         });
 
         usuarioVistaModelo.getMensajeErrorLiveData().observe(getViewLifecycleOwner(), mensaje -> {
-            if (mensaje != null && !mensaje.isEmpty()) {
+            if (mensaje != null && !mensaje.isEmpty() && isAdded()) {
                 Snackbar.make(requireView(), mensaje, Snackbar.LENGTH_LONG).show();
             }
         });
@@ -130,11 +147,21 @@ public class FragmentoPerfil extends Fragment {
         Usuario usuarioActualizado = new Usuario();
         usuarioActualizado.setNombre(etNombre.getText().toString().trim());
         usuarioActualizado.setEmail(etEmail.getText().toString().trim());
+        usuarioActualizado.setTelefono(Integer.parseInt(etTelefono.getText().toString().trim()));
         usuarioActualizado.setDni(etDni.getText().toString().trim());
         usuarioVistaModelo.actualizarUsuario(usuarioActualizado);
     }
 
     private void mostrarContenidoOcultoPorTeclado() {
-        UtilidadTeclado.ajustarPaddingAlMostrarTeclado(clContenedorPerfil, svContenedorPrincipal);
+        TecladoUtilidad.ajustarPaddingAlMostrarTeclado(clContenedorPerfil, svContenedorPrincipal);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (dialogoCarga != null && dialogoCarga.isShowing()) {
+            dialogoCarga.dismiss();
+            dialogoCarga = null;
+        }
     }
 }

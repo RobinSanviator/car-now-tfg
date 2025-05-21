@@ -15,12 +15,12 @@
         android:theme="@style/AppTheme"
         tools:targetApi="31">
         <activity
-            android:name=".vista.actividad.ActividadMenuPrincipal"
+            android:name=".vista.actividad.MenuPrincipalActividad"
             android:exported="false"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"/>
         <activity
-            android:name=".vista.actividad.ActividadPantallaDeInicio"
+            android:name=".vista.actividad.PantallaDeInicioActividad"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.CarNow.Splash">
@@ -31,12 +31,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".vista.actividad.ActividadRegistro"
+            android:name=".vista.actividad.RegistroActividad"
             android:exported="false"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".vista.actividad.ActividadInicioSesion"
+            android:name=".vista.actividad.InicioSesionActividad"
             android:exported="true"
             android:screenOrientation="portrait" />
     </application>

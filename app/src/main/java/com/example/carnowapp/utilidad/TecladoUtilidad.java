@@ -1,7 +1,5 @@
 package com.example.carnowapp.utilidad;
 
-import static androidx.core.content.ContentProviderCompat.requireContext;
-
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Rect;
@@ -10,7 +8,7 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 
-public class UtilidadTeclado {
+public class TecladoUtilidad {
 
     public static void ocultarTecladoAlTocar(Context contexto, View vista) {
         vista.setOnTouchListener((v, event) -> {

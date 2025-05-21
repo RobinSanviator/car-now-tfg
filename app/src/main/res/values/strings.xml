@@ -12,7 +12,7 @@
     <string name="o">O</string>
     <string name="inicio_sesion_google">Iniciar sesión con Google</string>
     <string name="default_web_client_id">689400737896-ibsr16sh8rgg9uadl3dl21fc9497oiuk.apps.googleusercontent.com</string>
-    <string name="error_correo">Introduc tu correo</string>
+    <string name="error_correo">Introduce tu email</string>
     <string name="error_contrasena">Introduce tu contraseña</string>
     <string name="error_nombre">Introduce tu nombre</string>
     <string name="error_formato_correo_no_valido">Formato de email no válido</string>
@@ -77,9 +77,12 @@
     <string name="error_registro_usuario">Error al registrar usuario: </string>
     <string name="error_desconocido">Error desconocido</string>
     <string name="mensaje_verificacion_correo">Para poder iniciar sesión, debes verificar tu correo electrónico. Por favor, revisa tu bandeja de entrada y confirma tu correo.</string>
+    <string name="mensaje_verificacion_correo_snackbar">Para poder iniciar sesión, debes verificar tu correo electrónico</string>
     <string name="mensaje_verificacion_exitosa">¡Correo verificado con éxito! Ahora puedes iniciar sesión.</string>
     <string name="mensaje_verificacion_error">No se pudo enviar el correo de verificación. Por favor, inténtalo nuevamente.</string>
     <string name="titulo_verificacion_correo">Verificación de correo</string>
+    <string name="error_servidor">Error del servidor. Intenta más tarde.</string>
+    <string name="error_campos_vacios">Todos los campos son obligatorios.</string>
     <string name="boton_aceptar">Aceptar</string>
     <string name="error_guardar_usuario">Error al guardar el usuario</string>
     <string name="boton_iniciar_sesion">Ir al inicio de sesión</string>
