@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,20 +15,26 @@ import android.view.WindowManager;
 import android.widget.ScrollView;
 
 import com.example.carnowapp.R;
+import com.example.carnowapp.datos.fuenteDeDatos.local.SQLiteUsuarioFuenteDeDatos;
 import com.example.carnowapp.modelo.Usuario;
 import com.example.carnowapp.utilidad.DialogoUtilidad;
+import com.example.carnowapp.utilidad.MensajesUtilidad;
 import com.example.carnowapp.utilidad.TecladoUtilidad;
+import com.example.carnowapp.utilidad.ValidacionUtilidad;
 import com.example.carnowapp.vistamodelo.UsuarioVistaModelo;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 public class FragmentoPerfil extends Fragment {
 
-    private TextInputEditText etNombre, etEmail, etTelefono, etDni;
+    private TextInputEditText etNombre, etEmail, etTelefono, etDni, etNuevaContrasena;
+    private TextInputLayout tilNuevaContrasena;
+    private View lineaDivisoraContrasenArriba, lineaDivisoraContrasenAbajo;
     private ShapeableImageView ivPerfil;
-    private MaterialButton btnGuardarCambios;
+    private MaterialButton btnGuardarCambios,btnCambiarContrasena, btnGuardarContrasena;
     private ScrollView svContenedorPrincipal;
     private ConstraintLayout clContenedorPerfil;
     private String nombreOriginal = "", emailOriginal = "", telefonoOriginal = "", dniOriginal = "";
@@ -49,8 +56,14 @@ public class FragmentoPerfil extends Fragment {
         observarDatosUsuario();
         mostrarContenidoOcultoPorTeclado();
         btnGuardarCambios.setOnClickListener(v -> guardarCambios()  );
+        configurarCambioContrasena(vista);
+
         return vista;
+
+
     }
+
+
 
     private void configurarCamposEditables() {
         TextWatcher watcher = new TextWatcher() {
@@ -95,28 +108,52 @@ public class FragmentoPerfil extends Fragment {
         btnGuardarCambios = vista.findViewById(R.id.btn_guardar_cambios);
         svContenedorPrincipal = vista.findViewById(R.id.sv_contenedor_perfil);
         clContenedorPerfil = vista.findViewById(R.id.cl_contenedor_perfil);
+        btnCambiarContrasena = vista.findViewById(R.id.btn_cambiar_contrasena);
+        btnGuardarContrasena = vista.findViewById(R.id.btn_guardar_contrasena);
+        tilNuevaContrasena = vista.findViewById(R.id.til_nueva_contrasena);
+        etNuevaContrasena = vista.findViewById(R.id.et_nueva_contrasena);
+        lineaDivisoraContrasenArriba = vista.findViewById(R.id.view_divisor_perfil4);
+        lineaDivisoraContrasenAbajo = vista.findViewById(R.id.view_divisor_perfil5);
+
     }
 
     private void configurarVistaModelo() {
         usuarioVistaModelo = new ViewModelProvider(this).get(UsuarioVistaModelo.class);
-        usuarioVistaModelo.cargarUsuarioActual();
+
+        // Obtener UID del usuario actual desde FirebaseAuth
+        String uid = com.google.firebase.auth.FirebaseAuth.getInstance().getCurrentUser() != null ?
+                com.google.firebase.auth.FirebaseAuth.getInstance().getCurrentUser().getUid() : null;
+
+        if (uid != null && !uid.isEmpty()) {
+            usuarioVistaModelo.cargarUsuario(uid);
+        } else {
+            // Manejar caso en que no haya usuario logueado, si aplica
+            Log.e("FragmentoPerfil", "No hay usuario logueado para cargar el perfil.");
+            MensajesUtilidad.mostrarMensaje(requireView(), R.string.error_usuario_no_valido);
+        }
     }
 
     private void observarDatosUsuario() {
         usuarioVistaModelo.getUsuarioLiveData().observe(getViewLifecycleOwner(), usuario -> {
+            Log.d("FragmentoPerfil", "Usuario recibido: " + usuario);
+
             if (usuario != null) {
-                nombreOriginal = usuario.getNombre();
-                emailOriginal = usuario.getEmail();
-                telefonoOriginal = String.valueOf(usuario.getTelefono());
-                dniOriginal = usuario.getDni();
+                nombreOriginal = usuario.getNombre() != null ? usuario.getNombre() : "";
+                emailOriginal = usuario.getEmail() != null ? usuario.getEmail() : "";
+                // CORRECCIÓN: evitar NullPointerException en telefono
+                telefonoOriginal = (usuario.getTelefono() != null && usuario.getTelefono() != 0) ? String.valueOf(usuario.getTelefono()) : "";
+                dniOriginal = usuario.getDni() != null ? usuario.getDni() : "";
+
                 etNombre.setText(nombreOriginal);
                 etEmail.setText(emailOriginal);
                 etTelefono.setText(telefonoOriginal);
                 etDni.setText(dniOriginal);
+
+                btnGuardarCambios.setVisibility(View.GONE);
             }
         });
 
-        usuarioVistaModelo.getCargandoLiveData().observe(getViewLifecycleOwner(), cargando -> {
+        usuarioVistaModelo.getCargando().observe(getViewLifecycleOwner(), cargando -> {
             if (!isAdded() || getContext() == null) return;
 
             if (cargando) {
@@ -135,30 +172,102 @@ public class FragmentoPerfil extends Fragment {
                 }
             }
         });
+    }
 
-        usuarioVistaModelo.getMensajeErrorLiveData().observe(getViewLifecycleOwner(), mensaje -> {
-            if (mensaje != null && !mensaje.isEmpty() && isAdded()) {
-                Snackbar.make(requireView(), mensaje, Snackbar.LENGTH_LONG).show();
+    private void guardarCambios() {
+        boolean dniValido = ValidacionUtilidad.validarDni(
+                ((TextInputLayout) etDni.getParent().getParent()), etDni, requireContext()
+        );
+
+        boolean telefonoValido = ValidacionUtilidad.validarTelefono(
+                ((TextInputLayout) etTelefono.getParent().getParent()), etTelefono, requireContext()
+        );
+
+        if (!dniValido || !telefonoValido) return;
+
+        String telefonoStr = etTelefono.getText() != null ? etTelefono.getText().toString().trim() : "";
+        int telefono = 0;
+        try {
+            telefono = Integer.parseInt(telefonoStr);
+        } catch (NumberFormatException e) {
+            etTelefono.setError(getString(R.string.error_telefono_invalido));
+            return;
+        }
+
+        Usuario usuarioBase = usuarioVistaModelo.getUsuarioLiveData().getValue();
+        if (usuarioBase == null || usuarioBase.getFirebaseUID() == null || usuarioBase.getFirebaseUID().isEmpty()) {
+            MensajesUtilidad.mostrarMensaje(requireView(), R.string.error_usuario_no_valido);
+            return;
+        }
+
+        Usuario usuarioActualizado = new Usuario();
+        usuarioActualizado.setFirebaseUID(usuarioBase.getFirebaseUID());
+        usuarioActualizado.setNombre(etNombre.getText().toString().trim());
+        usuarioActualizado.setEmail(etEmail.getText().toString().trim());
+        usuarioActualizado.setTelefono(telefono);
+        usuarioActualizado.setDni(etDni.getText().toString().trim());
+
+        usuarioVistaModelo.actualizarUsuario(usuarioActualizado);
+    }
+
+
+    private void configurarCambioContrasena(View vista) {
+        // Al inicio, ocultamos campos y botón guardar
+        tilNuevaContrasena.setVisibility(View.GONE);
+        btnGuardarContrasena.setVisibility(View.GONE);
+
+        // Pulsar "Cambiar contraseña" muestra campos y botón guardar, oculta botón cambiar
+        btnCambiarContrasena.setOnClickListener(v -> {
+            tilNuevaContrasena.setVisibility(View.VISIBLE);
+            btnGuardarContrasena.setVisibility(View.VISIBLE);
+            lineaDivisoraContrasenArriba.setVisibility(View.VISIBLE);
+            lineaDivisoraContrasenAbajo.setVisibility(View.VISIBLE);
+            btnCambiarContrasena.setVisibility(View.GONE);
+
+        });
+
+        // Pulsar "Guardar" valida y cambia la contraseña
+        btnGuardarContrasena.setOnClickListener(v -> {
+            if (!ValidacionUtilidad.validarContrasena(tilNuevaContrasena, etNuevaContrasena, requireContext())) {
+                return;
+            }
+            String nuevaContrasena = etNuevaContrasena.getText().toString().trim();
+            usuarioVistaModelo.cambiarContrasena(nuevaContrasena);
+        });
+
+        // Observamos resultado éxito
+        usuarioVistaModelo.getContrasenaActualizada().observe(getViewLifecycleOwner(), actualizado -> {
+            if (actualizado != null && actualizado) {
+                MensajesUtilidad.mostrarMensaje(requireView(), R.string.contrasena_actualizada_exito);
+                etNuevaContrasena.setText("");
+
+                tilNuevaContrasena.setVisibility(View.GONE);
+                btnGuardarContrasena.setVisibility(View.GONE);
+                btnCambiarContrasena.setVisibility(View.VISIBLE);
+                lineaDivisoraContrasenArriba.setVisibility(View.GONE);
+                lineaDivisoraContrasenAbajo.setVisibility(View.GONE);
+
+                TecladoUtilidad.ocultarTeclado(requireContext(), vista);
+            }
+        });
+
+        // Observamos errores
+        usuarioVistaModelo.getErrorActualizacionContrasena().observe(getViewLifecycleOwner(), errorMensaje -> {
+            if (errorMensaje != null && !errorMensaje.isEmpty()) {
+                Snackbar.make(requireView(), errorMensaje, Snackbar.LENGTH_LONG).show();
             }
         });
     }
 
-    private void guardarCambios() {
-        Usuario usuarioActualizado = new Usuario();
-        usuarioActualizado.setNombre(etNombre.getText().toString().trim());
-        usuarioActualizado.setEmail(etEmail.getText().toString().trim());
-        usuarioActualizado.setTelefono(Integer.parseInt(etTelefono.getText().toString().trim()));
-        usuarioActualizado.setDni(etDni.getText().toString().trim());
-        usuarioVistaModelo.actualizarUsuario(usuarioActualizado);
-    }
+
 
     private void mostrarContenidoOcultoPorTeclado() {
         TecladoUtilidad.ajustarPaddingAlMostrarTeclado(clContenedorPerfil, svContenedorPrincipal);
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
+    public void onDestroy() {
+        super.onDestroy();
         if (dialogoCarga != null && dialogoCarga.isShowing()) {
             dialogoCarga.dismiss();
             dialogoCarga = null;

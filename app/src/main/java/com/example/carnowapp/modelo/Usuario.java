@@ -7,77 +7,47 @@ public class Usuario {
     private String firebaseUID;
     private String nombre;
     private String email;
-    private int telefono;
+    private Integer telefono;
     private String dni;
-    private String tarjeta;
+    private String tarjetaUltimos4;
+    private String tarjetaCaducidad;
 
     public Usuario() {}
 
-
-    public Usuario(int id, String firebaseUID, String nombre, String email, int telefono, String dni, String tarjeta) {
-        this.id = id;
+    public Usuario(String firebaseUID, String nombre, String email, Integer telefono,
+                   String dni, String tarjetaUltimos4, String tarjetaCaducidad) {
         this.firebaseUID = firebaseUID;
         this.nombre = nombre;
         this.email = email;
         this.telefono = telefono;
         this.dni = dni;
-        this.tarjeta = tarjeta;
+        this.tarjetaUltimos4 = tarjetaUltimos4;
+        this.tarjetaCaducidad = tarjetaCaducidad;
     }
 
-    public int getId() {
-        return id;
-    }
+    // Getters y setters
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    public String getFirebaseUID() { return firebaseUID; }
+    public void setFirebaseUID(String firebaseUID) { this.firebaseUID = firebaseUID; }
 
-    public String getFirebaseUID() {
-        return firebaseUID;
-    }
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
 
-    public void setFirebaseUID(String firebaseUID) {
-        this.firebaseUID = firebaseUID;
-    }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
-    public String getNombre() {
-        return nombre;
-    }
+    public Integer getTelefono() { return telefono; }
+    public void setTelefono(Integer telefono) { this.telefono = telefono; }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
+    public String getDni() { return dni; }
+    public void setDni(String dni) { this.dni = dni; }
 
-    public String getEmail() {
-        return email;
-    }
+    public String getTarjetaUltimos4() { return tarjetaUltimos4; }
+    public void setTarjetaUltimos4(String tarjetaUltimos4) { this.tarjetaUltimos4 = tarjetaUltimos4; }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-
-    public void setTelefono(int telefono) {
-        this.telefono = telefono;
-    }
-
-    public Integer getTelefono() {
-        return telefono;
-    }
-
-    public String getDni() {
-        return dni;
-    }
-
-    public void setDni(String dni) {
-        this.dni = dni;
-    }
-
-    public String getTarjeta() {
-        return tarjeta;
-    }
-
-    public void setTarjeta(String tarjeta) {
-        this.tarjeta = tarjeta;
-    }
+    public String getTarjetaCaducidad() { return tarjetaCaducidad; }
+    public void setTarjetaCaducidad(String tarjetaCaducidad) { this.tarjetaCaducidad = tarjetaCaducidad; }
 }
+

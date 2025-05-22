@@ -88,4 +88,10 @@
     <string name="boton_iniciar_sesion">Ir al inicio de sesión</string>
     <string name="verifica_correo">Por favor verifica tu correo electrónico para poder iniciar sesión.</string>
     <string name="telefono">Teléfono</string>
+    <string name="error_usuario_no_valido">Error al cargar el usuario. Intenta reiniciar la aplicación.</string>
+    <string name="error_campo_obligatorio">Este campo es obligatorio</string>
+    <string name="error_telefono_invalido">Teléfono inválido. Debe tener 9 dígitos</string>
+    <string name="error_dni_invalido">DNI inválido. Debe tener 8 números y una letra válida</string>
+    <string name="error_actualizar_contrasena">Error al actualizar la contraseña</string>
+    <string name="contrasena_actualizada_exito">Contraseña actualizada con éxito</string>
 </resources>

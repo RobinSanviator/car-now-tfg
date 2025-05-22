@@ -9,7 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.carnowapp.datos.repositorio.AutenticacionRepositorio;
-import com.example.carnowapp.datos.repositorio.AutenticacionFirebaseRepositorio;
+import com.example.carnowapp.datos.repositorio.AutenticacionFirebaseRepositorioImpl;
 import com.example.carnowapp.utilidad.ConstantesAutenticacion;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.firebase.auth.AuthCredential;
@@ -18,7 +18,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class AutenticacionVistaModelo extends ViewModel {
 
-    private final AutenticacionRepositorio repositorio;
+    private final AutenticacionRepositorio autenticacionRepositorio;
 
     private final MutableLiveData<FirebaseUser> usuarioAutenticado = new MutableLiveData<>();
     private final MutableLiveData<Integer> codigoErrorAutenticacion = new MutableLiveData<>();
@@ -35,7 +35,7 @@ public class AutenticacionVistaModelo extends ViewModel {
 
 
     public AutenticacionVistaModelo() {
-        this.repositorio = new AutenticacionFirebaseRepositorio();
+        this.autenticacionRepositorio = new AutenticacionFirebaseRepositorioImpl();
     }
 
     // Getters existentes
@@ -70,7 +70,7 @@ public class AutenticacionVistaModelo extends ViewModel {
 
     // Método para registrar usuario con correo
     public void registrarUsuarioCorreo(String email, String contrasena, String nombre) {
-        repositorio.registrarUsuarioCorreo(email, contrasena, nombre)
+        autenticacionRepositorio.registrarUsuarioCorreo(email, contrasena, nombre)
                 .addOnSuccessListener(authResult -> {
                     registroExitoso.postValue(true);
                 })
@@ -125,7 +125,7 @@ public class AutenticacionVistaModelo extends ViewModel {
 
     // Métodos existentes para iniciar sesión, Google SignIn, etc...
     public void iniciarSesionConCorreoYContrasena(String email, String contrasena) {
-        repositorio.iniciarSesionConCorreoYContrasena(email, contrasena)
+        autenticacionRepositorio.iniciarSesionConCorreoYContrasena(email, contrasena)
                 .addOnSuccessListener(authResult -> {
                     FirebaseUser usuario = FirebaseAuth.getInstance().getCurrentUser();
                     usuarioAutenticado.setValue(usuario);
@@ -145,15 +145,15 @@ public class AutenticacionVistaModelo extends ViewModel {
     }
 
     public void inicializarGoogleSignIn(Context context) {
-        repositorio.inicializarGoogleSignIn(context);
+        autenticacionRepositorio.inicializarGoogleSignIn(context);
     }
 
     public GoogleSignInClient obtenerGoogleSignInClient() {
-        return repositorio.obtenerGoogleSignInClient();
+        return autenticacionRepositorio.obtenerGoogleSignInClient();
     }
 
     public void iniciarSesionGoogle(AuthCredential credential, String nombre, String email) {
-        repositorio.registrarUsuarioGoogle(credential, nombre, email)
+        autenticacionRepositorio.registrarUsuarioGoogle(credential, nombre, email)
                 .addOnSuccessListener(authResult -> loginExitosoGoogle.setValue(true))
                 .addOnFailureListener(e -> {
                     errorGoogle.setValue(e.getMessage());

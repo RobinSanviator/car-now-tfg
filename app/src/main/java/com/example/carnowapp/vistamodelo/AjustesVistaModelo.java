@@ -7,16 +7,15 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.carnowapp.datos.repositorio.AutenticacionFirebaseRepositorio;
+import com.example.carnowapp.datos.repositorio.AutenticacionFirebaseRepositorioImpl;
 import com.example.carnowapp.datos.repositorio.PreferenciasAjustesRepositorio;
-import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Locale;
 
 public class AjustesVistaModelo extends ViewModel {
 
     private PreferenciasAjustesRepositorio preferenciasRepositorio;
-    private AutenticacionFirebaseRepositorio autenticacionRepositorio;
+    private AutenticacionFirebaseRepositorioImpl autenticacionRepositorio;
     private final MutableLiveData<Boolean> sesionCerrada = new MutableLiveData<>();
 
     public void inicializar(Context context) {
@@ -24,7 +23,7 @@ public class AjustesVistaModelo extends ViewModel {
             preferenciasRepositorio = new PreferenciasAjustesRepositorio(context);
         }
         if (autenticacionRepositorio == null) {
-            autenticacionRepositorio = new AutenticacionFirebaseRepositorio();
+            autenticacionRepositorio = new AutenticacionFirebaseRepositorioImpl();
             autenticacionRepositorio.inicializarGoogleSignIn(context);
         }
     }

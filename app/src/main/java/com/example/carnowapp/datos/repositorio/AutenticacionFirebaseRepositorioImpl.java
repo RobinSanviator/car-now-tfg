@@ -6,7 +6,7 @@ import android.util.Log;
 
 import com.example.carnowapp.R;
 import com.example.carnowapp.modelo.Usuario;
-import com.example.carnowapp.datos.fuenteDeDatos.FirebaseFuenteDatos;
+import com.example.carnowapp.datos.fuenteDeDatos.firebase.FirebaseUsuarioFuenteDatos;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -18,12 +18,12 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class AutenticacionFirebaseRepositorio implements AutenticacionRepositorio {
+public class AutenticacionFirebaseRepositorioImpl implements AutenticacionRepositorio {
     private static final String TAG = "AutenticacionRepo";
 
     private final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     private GoogleSignInClient googleSignInClient;
-    private final FirebaseFuenteDatos usuarioFirebase = new FirebaseFuenteDatos();
+    private final FirebaseUsuarioFuenteDatos usuarioFirebase = new FirebaseUsuarioFuenteDatos();
 
     @Override
     public Task<AuthResult> registrarUsuarioCorreo(String email, String contrasena, String nombre) {
@@ -38,6 +38,11 @@ public class AutenticacionFirebaseRepositorio implements AutenticacionRepositori
                     usuario.setFirebaseUID(user.getUid());
                     usuario.setEmail(email);
                     usuario.setNombre(nombre);
+                    usuario.setTelefono(null);
+                    usuario.setDni(null);
+                    usuario.setTarjetaUltimos4(null);
+                    usuario.setTarjetaCaducidad(null);
+
 
                     // Guardar usuario en base de datos (delegando a FirebaseFuenteDatos)
                     return usuarioFirebase.guardarUsuario(user.getUid(), usuario)
@@ -55,6 +60,10 @@ public class AutenticacionFirebaseRepositorio implements AutenticacionRepositori
                 usuario.setFirebaseUID(user.getUid());
                 usuario.setEmail(email);
                 usuario.setNombre(nombre);
+                usuario.setTelefono(null);
+                usuario.setDni(null);
+                usuario.setTarjetaUltimos4(null);
+                usuario.setTarjetaCaducidad(null);
 
                 return usuarioFirebase.guardarUsuario(user.getUid(), usuario)
                         .onSuccessTask(task -> Tasks.forResult(authResult));

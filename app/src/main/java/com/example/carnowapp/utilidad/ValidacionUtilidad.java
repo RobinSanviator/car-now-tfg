@@ -39,6 +39,22 @@ public class ValidacionUtilidad {
         }
     }
 
+    public static boolean validarContrasena(TextInputLayout layout, TextInputEditText campo, Context contexto) {
+        String contrasena = campo.getText() != null ? campo.getText().toString().trim() : "";
+
+        if (!validarCampoVacio(layout, campo, contexto.getString(R.string.error_campo_obligatorio))) {
+            return false;
+        }
+
+        if (contrasena.length() < 6) {
+            layout.setError(contexto.getString(R.string.error_contrasena_min_6));
+            return false;
+        }
+
+        layout.setError(null);
+        return true;
+    }
+
     public static boolean validarConfirmacionContrasena(TextInputLayout layout, String contrasena, String confirmarContrasena, Context contexto) {
         if (confirmarContrasena.isEmpty()) {
             layout.setError(contexto.getString(R.string.confirmar_contrasena));
@@ -116,4 +132,33 @@ public class ValidacionUtilidad {
             }
         });
     }
+
+    public static boolean validarTelefono(TextInputLayout layout, TextInputEditText campo, Context contexto) {
+        String telefono = campo.getText() != null ? campo.getText().toString().trim() : "";
+        if (telefono.isEmpty()) {
+            layout.setError(contexto.getString(R.string.error_campo_obligatorio));
+            return false;
+        } else if (!telefono.matches("^[0-9]{9}$")) {
+            layout.setError(contexto.getString(R.string.error_telefono_invalido));
+            return false;
+        } else {
+            layout.setError(null);
+            return true;
+        }
+    }
+
+    public static boolean validarDni(TextInputLayout layout, TextInputEditText campo, Context contexto) {
+        String dni = campo.getText() != null ? campo.getText().toString().trim().toUpperCase() : "";
+        if (dni.isEmpty()) {
+            layout.setError(contexto.getString(R.string.error_campo_obligatorio));
+            return false;
+        } else if (!dni.matches("^[0-9]{8}[A-HJ-NP-TV-Z]$")) {
+            layout.setError(contexto.getString(R.string.error_dni_invalido));
+            return false;
+        } else {
+            layout.setError(null);
+            return true;
+        }
+    }
+
 }
