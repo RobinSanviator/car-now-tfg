@@ -4,17 +4,14 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
-
-
 import com.example.carnowapp.modelo.Usuario;
 
 
-public class SQLiteUsuarioFuenteDeDatos {
+public class UsuarioFuenteDeDatosSQLite {
 
     private final BaseDatosLocalSQLite bdLocalSQLite;
 
-    public SQLiteUsuarioFuenteDeDatos(Context context) {
+    public UsuarioFuenteDeDatosSQLite(Context context) {
         bdLocalSQLite = new BaseDatosLocalSQLite(context);
     }
 
@@ -33,6 +30,7 @@ public class SQLiteUsuarioFuenteDeDatos {
         valores.put("dni", usuario.getDni());
         valores.put("tarjetaUltimos4", usuario.getTarjetaUltimos4());
         valores.put("tarjetaCaducidad", usuario.getTarjetaCaducidad());
+        valores.put("imagenUrl", usuario.getImagenUrl());
 
         long resultado = db.insert("usuarios", null, valores);
         db.close();
@@ -67,7 +65,8 @@ public class SQLiteUsuarioFuenteDeDatos {
                         telefono,
                         cursor.getString(cursor.getColumnIndexOrThrow("dni")),
                         cursor.getString(cursor.getColumnIndexOrThrow("tarjetaUltimos4")),
-                        cursor.getString(cursor.getColumnIndexOrThrow("tarjetaCaducidad"))
+                        cursor.getString(cursor.getColumnIndexOrThrow("tarjetaCaducidad")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("imagenUrl"))
                 );
             }
         } finally {
@@ -92,12 +91,18 @@ public class SQLiteUsuarioFuenteDeDatos {
         valores.put("dni", usuario.getDni());
         valores.put("tarjetaUltimos4", usuario.getTarjetaUltimos4());
         valores.put("tarjetaCaducidad", usuario.getTarjetaCaducidad());
+        valores.put("imagenUrl", usuario.getImagenUrl());
 
         int filas = db.update("usuarios", valores, "firebaseUID = ?", new String[]{usuario.getFirebaseUID()});
         db.close();
         return filas > 0;
     }
 
-
-
+    public void actualizarImagenUsuario(String uid, String urlImagen) {
+        SQLiteDatabase db = bdLocalSQLite.getWritableDatabase();
+        ContentValues valores = new ContentValues();
+        valores.put("imagenUrl", urlImagen);
+        db.update("usuarios", valores, "firebaseUID = ?", new String[]{uid});
+        db.close();
+    }
 }

@@ -40,6 +40,7 @@
                 android:layout_height="120dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="5dp"
+                android:scaleType="centerCrop"
                 android:clickable="true"
                 android:focusable="true"
                 android:background="@color/color_pista"
@@ -47,12 +48,6 @@
                 app:shapeAppearanceOverlay="@style/CircularImage"
                 tools:ignore="SpeakableTextPresentCheck" />
 
-            <View
-                android:id="@+id/view_divisor_perfil"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="20dp"
-                android:background="@color/color_principal" />
         </LinearLayout>
 
         <LinearLayout

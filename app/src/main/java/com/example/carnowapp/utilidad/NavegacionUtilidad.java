@@ -1,5 +1,6 @@
 package com.example.carnowapp.utilidad;
 
+
 import static androidx.core.content.ContextCompat.startActivity;
 
 import android.app.Activity;
@@ -11,7 +12,11 @@ import android.view.View;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
+import com.example.carnowapp.R;
 import com.example.carnowapp.vista.actividad.InicioSesionActividad;
 
 public class NavegacionUtilidad {
@@ -61,5 +66,12 @@ public class NavegacionUtilidad {
         }, 300);
     }
 
+    public static void cargarFragmento(AppCompatActivity actividad, Fragment fragmento) {
+        FragmentManager fragmentManager = actividad.getSupportFragmentManager();
+        FragmentTransaction transaccion = fragmentManager.beginTransaction();
+        transaccion.replace(R.id.fl_contenedor_menu_principal, fragmento);
+        transaccion.addToBackStack(null);
+        transaccion.commit();
+    }
 
 }

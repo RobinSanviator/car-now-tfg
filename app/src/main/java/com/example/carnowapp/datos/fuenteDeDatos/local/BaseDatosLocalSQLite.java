@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class BaseDatosLocalSQLite extends SQLiteOpenHelper {
     private static final String NOMBRE_BD = "CarNowBD.db";
-    private static final int VERSION_BD = 1;
+    private static final int VERSION_BD = 5;
 
     // Tabla Usuarios
     private static final String SQL_CREAR_TABLA_USUARIOS =
@@ -18,7 +18,8 @@ public class BaseDatosLocalSQLite extends SQLiteOpenHelper {
                     "telefono INTEGER, " +
                     "dni TEXT, " +
                     "tarjetaUltimos4 TEXT, " +
-                    "tarjetaCaducidad TEXT" +
+                    "tarjetaCaducidad TEXT, " +
+                    "imagenUrl TEXT" +
                     ");";
 
     // Tabla Vehículos
@@ -33,9 +34,10 @@ public class BaseDatosLocalSQLite extends SQLiteOpenHelper {
                     "estado TEXT DEFAULT 'disponible', " +   // disponible, reservado, mantenimiento, etc.
                     "plazas INTEGER, " +
                     "puertas INTEGER, " +
-                    "tipoCombustible TEXT, " +               // gasolina, diésel, eléctrico, híbrido
+                    "tipoCombustible TEXT, " + // gasolina, diésel, eléctrico, híbrido
                     "transmision TEXT, " +                   // manual, automática
-                    "precioDia REAL NOT NULL" +
+                    "precioDia REAL NOT NULL, " +
+                    "ubicacion TEXT" +
                     ");";
 
 
@@ -66,13 +68,13 @@ public class BaseDatosLocalSQLite extends SQLiteOpenHelper {
                     "FOREIGN KEY(idUsuario) REFERENCES usuarios(id)" +
                     ");";
 
-    // Tabla Pagos
+
     private static final String SQL_CREAR_TABLA_PAGOS =
             "CREATE TABLE pagos (" +
                     "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "pagoUID TEXT NOT NULL UNIQUE, " +
                     "idReserva INTEGER NOT NULL, " +
-                    "metodoPago TEXT NOT NULL, " +      // tarjeta, paypal, etc.
+                    "metodoPago TEXT NOT NULL, " +
                     "importe REAL NOT NULL, " +
                     "estado TEXT DEFAULT 'pendiente', " + // pendiente, pagado, fallido
                     "fechaPago TEXT, " +

@@ -11,11 +11,12 @@ public class Usuario {
     private String dni;
     private String tarjetaUltimos4;
     private String tarjetaCaducidad;
+    private String imagenUrl;
 
     public Usuario() {}
 
     public Usuario(String firebaseUID, String nombre, String email, Integer telefono,
-                   String dni, String tarjetaUltimos4, String tarjetaCaducidad) {
+                   String dni, String tarjetaUltimos4, String tarjetaCaducidad, String imagenUrl) {
         this.firebaseUID = firebaseUID;
         this.nombre = nombre;
         this.email = email;
@@ -23,6 +24,7 @@ public class Usuario {
         this.dni = dni;
         this.tarjetaUltimos4 = tarjetaUltimos4;
         this.tarjetaCaducidad = tarjetaCaducidad;
+        this.imagenUrl = imagenUrl;
     }
 
     // Getters y setters
@@ -49,5 +51,8 @@ public class Usuario {
 
     public String getTarjetaCaducidad() { return tarjetaCaducidad; }
     public void setTarjetaCaducidad(String tarjetaCaducidad) { this.tarjetaCaducidad = tarjetaCaducidad; }
+
+    public String getImagenUrl(){return imagenUrl;}
+    public void setImagenUrl(String imagenUrl){this.imagenUrl = imagenUrl;}
 }
 

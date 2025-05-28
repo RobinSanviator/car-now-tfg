@@ -6,7 +6,7 @@ import android.util.Log;
 
 import com.example.carnowapp.R;
 import com.example.carnowapp.modelo.Usuario;
-import com.example.carnowapp.datos.fuenteDeDatos.firebase.FirebaseUsuarioFuenteDatos;
+import com.example.carnowapp.datos.fuenteDeDatos.firebase.UsuarioFuenteDatosFirebase;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -23,7 +23,7 @@ public class AutenticacionFirebaseRepositorioImpl implements AutenticacionReposi
 
     private final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     private GoogleSignInClient googleSignInClient;
-    private final FirebaseUsuarioFuenteDatos usuarioFirebase = new FirebaseUsuarioFuenteDatos();
+    private final UsuarioFuenteDatosFirebase usuarioFirebase = new UsuarioFuenteDatosFirebase();
 
     @Override
     public Task<AuthResult> registrarUsuarioCorreo(String email, String contrasena, String nombre) {

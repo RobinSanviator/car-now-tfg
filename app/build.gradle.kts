@@ -37,7 +37,6 @@ android {
 }
 
 dependencies {
-    implementation(platform("com.google.firebase:firebase-bom:33.12.0"))
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.android.gms:play-services-auth:20.3.0")
@@ -48,6 +47,10 @@ dependencies {
     implementation("com.google.firebase:firebase-functions:21.2.1")
     implementation ("androidx.lifecycle:lifecycle-viewmodel:2.7.0")
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
+    implementation(platform("com.google.firebase:firebase-bom:33.13.0"))
+    implementation("com.google.firebase:firebase-storage")
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
+    implementation ("com.github.shuhart:stepview:1.5.1")
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)

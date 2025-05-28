@@ -1,5 +1,6 @@
 package com.example.carnowapp.utilidad;
 
+import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
@@ -159,6 +160,16 @@ public class AnimacionUtilidad {
                             .start();
                 })
                 .start();
+    }
+
+    public static void rotar360Y(View view, int duracion, Animator.AnimatorListener listener) {
+        ObjectAnimator rotation = ObjectAnimator.ofFloat(view, "rotationY", 0f, 360f);
+        rotation.setDuration(duracion);
+        rotation.setInterpolator(new DecelerateInterpolator());
+        if (listener != null) {
+            rotation.addListener(listener);
+        }
+        rotation.start();
     }
 
 }

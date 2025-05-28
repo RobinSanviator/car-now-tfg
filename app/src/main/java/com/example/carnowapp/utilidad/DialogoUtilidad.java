@@ -3,13 +3,18 @@ package com.example.carnowapp.utilidad;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.ColorStateList;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -149,4 +154,57 @@ public class DialogoUtilidad {
         return icono;
     }
 
+
+    public static AlertDialog crearDialogoSelectorConIconos(Context contexto,
+                                                            String titulo,
+                                                            String[] opciones,
+                                                            int[] iconosOpciones,
+                                                            boolean[] tintarIconos,
+                                                            DialogInterface.OnClickListener listener) {
+
+        ListAdapter adaptador = new ArrayAdapter<String>(contexto, android.R.layout.select_dialog_item, opciones) {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View vista = super.getView(position, convertView, parent);
+                TextView texto = (TextView) vista.findViewById(android.R.id.text1);
+
+                texto.setTextColor(ContextCompat.getColor(contexto, R.color.color_texto_primario));
+                texto.setTextSize(14); // Tamaño reducido de las opciones
+
+                Drawable icono;
+                if (tintarIconos != null && tintarIconos.length > position && tintarIconos[position]) {
+                    icono = obtenerIconoTintado(contexto, iconosOpciones[position]);
+                } else {
+                    icono = AppCompatResources.getDrawable(contexto, iconosOpciones[position]);
+                }
+
+                texto.setCompoundDrawablesWithIntrinsicBounds(
+                        icono,
+                        null, null, null
+                );
+
+                texto.setCompoundDrawablePadding(16);
+                texto.setPadding(40, 30, 40, 30);
+                vista.setBackgroundColor(ContextCompat.getColor(contexto, R.color.color_fondo_variante));
+                return vista;
+            }
+        };
+
+        // Título personalizado con mayor tamaño y color
+        TextView tituloPersonalizado = new TextView(contexto);
+        tituloPersonalizado.setText(titulo);
+        tituloPersonalizado.setPadding(40, 50, 40, 30);
+        tituloPersonalizado.setTextColor(ContextCompat.getColor(contexto, R.color.color_texto_primario));
+        tituloPersonalizado.setTextSize(18); // Tamaño grande
+        tituloPersonalizado.setTypeface(null, Typeface.BOLD);
+
+        AlertDialog dialogo = new MaterialAlertDialogBuilder(contexto)
+                .setCustomTitle(tituloPersonalizado)
+                .setAdapter(adaptador, listener)
+                .setBackground(crearColor(contexto, R.color.color_fondo_variante))
+                .setCancelable(true)
+                .create();
+
+        return dialogo;
+    }
 }

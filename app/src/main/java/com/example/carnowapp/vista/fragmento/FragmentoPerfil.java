@@ -1,6 +1,12 @@
 package com.example.carnowapp.vista.fragmento;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
@@ -14,11 +20,12 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ScrollView;
 
+import com.bumptech.glide.Glide;
 import com.example.carnowapp.R;
-import com.example.carnowapp.datos.fuenteDeDatos.local.SQLiteUsuarioFuenteDeDatos;
 import com.example.carnowapp.modelo.Usuario;
 import com.example.carnowapp.utilidad.DialogoUtilidad;
 import com.example.carnowapp.utilidad.MensajesUtilidad;
+import com.example.carnowapp.utilidad.SelectorImagenUtilidad;
 import com.example.carnowapp.utilidad.TecladoUtilidad;
 import com.example.carnowapp.utilidad.ValidacionUtilidad;
 import com.example.carnowapp.vistamodelo.UsuarioVistaModelo;
@@ -33,13 +40,19 @@ public class FragmentoPerfil extends Fragment {
     private TextInputEditText etNombre, etEmail, etTelefono, etDni, etNuevaContrasena;
     private TextInputLayout tilNuevaContrasena;
     private View lineaDivisoraContrasenArriba, lineaDivisoraContrasenAbajo;
-    private ShapeableImageView ivPerfil;
     private MaterialButton btnGuardarCambios,btnCambiarContrasena, btnGuardarContrasena;
     private ScrollView svContenedorPrincipal;
     private ConstraintLayout clContenedorPerfil;
     private String nombreOriginal = "", emailOriginal = "", telefonoOriginal = "", dniOriginal = "";
     private UsuarioVistaModelo usuarioVistaModelo;
     private AlertDialog dialogoCarga;
+    private ActivityResultLauncher<String> permisoCamaraLauncher;
+    private ActivityResultLauncher<Intent> lanzadorGaleria;
+    private ActivityResultLauncher<Uri> lanzadorCamara;
+    private Uri imagenSeleccionadaUri;
+    private ShapeableImageView ivPerfil;
+    private SelectorImagenUtilidad selectorImagenUtilidad;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,6 +70,12 @@ public class FragmentoPerfil extends Fragment {
         mostrarContenidoOcultoPorTeclado();
         btnGuardarCambios.setOnClickListener(v -> guardarCambios()  );
         configurarCambioContrasena(vista);
+
+        permisoCamaraLauncher = crearLanzadorPermisoCamara();
+        lanzadorGaleria = crearLanzadorGaleria();
+        lanzadorCamara = crearLanzadorCamara();
+
+        inicializarSeleccionImagen();
 
         return vista;
 
@@ -114,6 +133,7 @@ public class FragmentoPerfil extends Fragment {
         etNuevaContrasena = vista.findViewById(R.id.et_nueva_contrasena);
         lineaDivisoraContrasenArriba = vista.findViewById(R.id.view_divisor_perfil4);
         lineaDivisoraContrasenAbajo = vista.findViewById(R.id.view_divisor_perfil5);
+        ivPerfil = vista.findViewById(R.id.iv_perfil);
 
     }
 
@@ -135,12 +155,10 @@ public class FragmentoPerfil extends Fragment {
 
     private void observarDatosUsuario() {
         usuarioVistaModelo.getUsuarioLiveData().observe(getViewLifecycleOwner(), usuario -> {
-            Log.d("FragmentoPerfil", "Usuario recibido: " + usuario);
 
             if (usuario != null) {
                 nombreOriginal = usuario.getNombre() != null ? usuario.getNombre() : "";
                 emailOriginal = usuario.getEmail() != null ? usuario.getEmail() : "";
-                // CORRECCIÓN: evitar NullPointerException en telefono
                 telefonoOriginal = (usuario.getTelefono() != null && usuario.getTelefono() != 0) ? String.valueOf(usuario.getTelefono()) : "";
                 dniOriginal = usuario.getDni() != null ? usuario.getDni() : "";
 
@@ -150,7 +168,20 @@ public class FragmentoPerfil extends Fragment {
                 etDni.setText(dniOriginal);
 
                 btnGuardarCambios.setVisibility(View.GONE);
+
+                String imagenUrl = usuario.getImagenUrl();
+                if (imagenUrl != null && !imagenUrl.isEmpty()) {
+                    Glide.with(this)
+                            .load(imagenUrl)
+                            .placeholder(R.drawable.ic_perfil)
+                            .error(R.drawable.ic_perfil)
+                            .centerCrop()
+                            .into(ivPerfil);
+                } else {
+                    ivPerfil.setImageResource(R.drawable.ic_perfil);
+                }
             }
+
         });
 
         usuarioVistaModelo.getCargando().observe(getViewLifecycleOwner(), cargando -> {
@@ -170,6 +201,12 @@ public class FragmentoPerfil extends Fragment {
                     dialogoCarga.dismiss();
                     dialogoCarga = null;
                 }
+            }
+        });
+
+        usuarioVistaModelo.getError().observe(getViewLifecycleOwner(), hayError -> {
+            if (hayError != null && hayError) {
+                MensajesUtilidad.mostrarMensaje(requireView(), R.string.no_hay_conexion_internet);
             }
         });
     }
@@ -259,6 +296,52 @@ public class FragmentoPerfil extends Fragment {
         });
     }
 
+    private ActivityResultLauncher<String> crearLanzadorPermisoCamara() {
+        return registerForActivityResult(
+                new ActivityResultContracts.RequestPermission(),
+                isGranted -> {
+                    if (selectorImagenUtilidad != null) {
+                        selectorImagenUtilidad.onPermisoCamaraResultado(isGranted);
+                    }
+                });
+    }
+
+    private ActivityResultLauncher<Intent> crearLanzadorGaleria() {
+        return registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                        selectorImagenUtilidad.onResultadoGaleria(result.getData());
+                    }
+                });
+    }
+
+    private ActivityResultLauncher<Uri> crearLanzadorCamara() {
+        return registerForActivityResult(
+                new ActivityResultContracts.TakePicture(), // Correcto para cámara
+                result -> {
+                    if (result && selectorImagenUtilidad != null) {
+                        selectorImagenUtilidad.onResultadoCamara(true);
+                    }
+                });
+    }
+
+    private void inicializarSeleccionImagen() {
+        selectorImagenUtilidad = new SelectorImagenUtilidad(
+                requireActivity(),
+                permisoCamaraLauncher,
+                lanzadorGaleria,
+                lanzadorCamara
+        );
+
+        selectorImagenUtilidad.setImagenSeleccionadaListener(uri -> {
+            imagenSeleccionadaUri = uri;
+            ivPerfil.setImageURI(uri);
+            usuarioVistaModelo.subirImagenPerfil(uri);
+        });
+
+        ivPerfil.setOnClickListener(v -> selectorImagenUtilidad.mostrarDialogoSeleccionImagen());
+    }
 
 
     private void mostrarContenidoOcultoPorTeclado() {

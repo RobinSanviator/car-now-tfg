@@ -2,6 +2,7 @@ package com.example.carnowapp.vistamodelo;
 
 
 import android.app.Application;
+import android.net.Uri;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -18,9 +19,12 @@ public class UsuarioVistaModelo extends AndroidViewModel {
 
     private final MutableLiveData<Usuario> usuarioLiveData = new MutableLiveData<>();
     private final MutableLiveData<Boolean> cargando = new MutableLiveData<>();
-    private final MutableLiveData<String> error = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> error = new MutableLiveData<>();
     private final MutableLiveData<Boolean> contrasenaActualizada = new MutableLiveData<>();
     private final MutableLiveData<String> errorActualizacionContrasena = new MutableLiveData<>();
+    private final MutableLiveData<Uri> imagenPerfilLiveData = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> cargandoImagen = new MutableLiveData<>();
+    private final MutableLiveData<String> errorImagen = new MutableLiveData<>();
 
 
     public UsuarioVistaModelo(@NonNull Application application) {
@@ -45,12 +49,25 @@ public class UsuarioVistaModelo extends AndroidViewModel {
         return errorActualizacionContrasena;
     }
 
+    public LiveData<Boolean> getError() {
+        return error;
+    }
 
+    public LiveData<Uri> getImagenPerfilLiveData() {
+        return imagenPerfilLiveData;
+    }
 
-    // Método para cargar usuario por UID
+    public LiveData<Boolean> getCargandoImagen() {
+        return cargandoImagen;
+    }
+
+    public LiveData<String> getErrorImagen() {
+        return errorImagen;
+    }
+
     public void cargarUsuario(String uid) {
         cargando.setValue(true);
-        error.setValue(null);
+        error.setValue(false);
 
         usuarioRepositorio.obtenerUsuarioPorUID(uid)
                 .addOnSuccessListener(usuario -> {
@@ -58,7 +75,7 @@ public class UsuarioVistaModelo extends AndroidViewModel {
                     cargando.setValue(false);
                 })
                 .addOnFailureListener(e -> {
-                    error.setValue(e.getMessage());
+                    error.setValue(true);  // sí hay error
                     cargando.setValue(false);
                 });
     }
@@ -66,7 +83,7 @@ public class UsuarioVistaModelo extends AndroidViewModel {
     // Método para actualizar usuario
     public void actualizarUsuario(Usuario usuario) {
         cargando.setValue(true);
-        error.setValue(null);
+        error.setValue(false);
 
         usuarioRepositorio.actualizarUsuario(usuario)
                 .addOnSuccessListener(unused -> {
@@ -74,7 +91,7 @@ public class UsuarioVistaModelo extends AndroidViewModel {
                     cargando.setValue(false);
                 })
                 .addOnFailureListener(e -> {
-                    error.setValue(e.getMessage());
+                    error.setValue(true);
                     cargando.setValue(false);
                 });
     }
@@ -84,4 +101,20 @@ public class UsuarioVistaModelo extends AndroidViewModel {
                 .addOnSuccessListener(unused -> contrasenaActualizada.setValue(true))
                 .addOnFailureListener(e -> errorActualizacionContrasena.setValue(e.getMessage()));
     }
+
+    public void subirImagenPerfil(Uri rutaImagen) {
+        cargandoImagen.setValue(true);
+        errorImagen.setValue(null);
+
+        usuarioRepositorio.subirImagenPerfil(rutaImagen)
+                .addOnSuccessListener(uri -> {
+                    imagenPerfilLiveData.setValue(uri);
+                    cargandoImagen.setValue(false);
+                })
+                .addOnFailureListener(e -> {
+                    errorImagen.setValue(e.getMessage());
+                    cargandoImagen.setValue(false);
+                });
+    }
+
 }

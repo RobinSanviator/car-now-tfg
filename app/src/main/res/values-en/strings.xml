@@ -89,5 +89,13 @@
     <string name="verifica_correo">Please verify your email to sign in.</string>
     <string name="telefono">Phone</string>
 
+    <string-array name="lista_pasos">
+        <item>Location</item>
+        <item>Vehicle</item>
+        <item>Map</item>
+        <item>Reserve</item>
+        <item>Pay</item>
+    </string-array>
+
 
 </resources>

@@ -3,16 +3,20 @@ package com.example.carnowapp.vista.fragmento;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.example.carnowapp.R;
 import com.example.carnowapp.utilidad.DialogoUtilidad;
@@ -128,12 +132,20 @@ public class FragmentoAjustes extends Fragment {
                 contexto.getString(R.string.idioma_ingles)
         };
 
-        Drawable icono = DialogoUtilidad.obtenerIconoTintado(contexto, R.drawable.ic_idioma);
+        int[] iconos = {
+                R.drawable.espana,
+                R.drawable.uk
+        };
 
-        new MaterialAlertDialogBuilder(contexto)
-                .setTitle(contexto.getString(R.string.titulo_selector_idioma))
-                .setIcon(icono)
-                .setItems(idiomas, (dialog, which) -> {
+        boolean[] tintarIconos = {false, false};
+
+        AlertDialog dialogo = DialogoUtilidad.crearDialogoSelectorConIconos(
+                contexto,
+                contexto.getString(R.string.titulo_selector_idioma),
+                idiomas,
+                iconos,
+                tintarIconos,
+                (dialog, which) -> {
                     String idiomaSeleccionado = idiomas[which];
                     String codigoIdioma = (which == 0) ? "es" : "en";
 
@@ -148,10 +160,10 @@ public class FragmentoAjustes extends Fragment {
                             (d, w) -> d.dismiss()
                     );
                     confirmacion.show();
-                })
-                .setBackground(DialogoUtilidad.crearColor(contexto, R.color.color_fondo_variante))
-                .setCancelable(true)
-                .show();
+                }
+        );
+
+        dialogo.show();
     }
 
 
